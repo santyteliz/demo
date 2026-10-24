@@ -20,6 +20,14 @@ function heroMiniaturas() {
   if (!lista) return;
   const capas = [...document.querySelectorAll<HTMLElement>('[data-hero-capa]')];
   const thumbs = [...lista.querySelectorAll<HTMLElement>('[data-hero-thumb]')];
+  // Las fotos de fondo están recortadas (clip-path) y el lazy loading nunca las descargaría:
+  // en desktop se piden cuando la página ya cargó, antes del primer hover.
+  if (matchMedia('(min-width: 1024px)').matches) {
+    const precargar = () => capas.forEach((c) => c.querySelectorAll('img').forEach((img) => { img.loading = 'eager'; }));
+    if (document.readyState === 'complete') precargar();
+    else addEventListener('load', precargar, { once: true });
+    lista.addEventListener('pointerenter', precargar, { once: true });
+  }
   const activar = (i: number) => {
     capas.forEach((c, k) => c.classList.toggle('is-activa', k === i));
     thumbs.forEach((t, k) => t.classList.toggle('is-activa', k === i));

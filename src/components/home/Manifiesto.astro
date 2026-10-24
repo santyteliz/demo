@@ -24,7 +24,10 @@ import hoja from '../../assets/marca/praderas-hoja-naranja.png';
 <style>
   .man { overflow: hidden; }
   .man__hoja { position: absolute; right: -70px; top: 60px; width: 230px; height: auto; transform: rotate(18deg); }
-  .man__grid { display: flex; flex-wrap: wrap; gap: clamp(3rem, 6vw, 5rem); align-items: flex-start; }
+  @media (max-width: 767px) {
+    .man__hoja { width: 96px; right: -34px; top: 28px; }
+  }
+  .man__grid { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: clamp(3rem, 6vw, 5rem); align-items: flex-start; }
   .man__texto { flex: 999 1 560px; min-width: 0; }
   .man__texto .overline { margin-bottom: 40px; }
   .man__parrafo { font-family: var(--font-display); font-size: clamp(1.75rem, 3.3vw, 3rem); line-height: 1.22; letter-spacing: -.01em; }

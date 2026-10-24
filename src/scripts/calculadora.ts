@@ -5,8 +5,9 @@ function contar(desde: number, hasta: number, alPintar: (v: number) => void, dur
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { alPintar(hasta); return () => {}; }
   const t0 = performance.now();
   let id = 0;
-  const paso = (t: number) => {
-    const p = Math.min(1, (t - t0) / dur);
+  const paso = () => {
+    // Se mide con performance.now(): el timestamp de rAF puede venir de otro reloj y dispararse
+    const p = Math.min(1, Math.max(0, (performance.now() - t0) / dur));
     const e = 1 - Math.pow(1 - p, 3); // power3.out
     alPintar(desde + (hasta - desde) * e);
     if (p < 1) id = requestAnimationFrame(paso);
