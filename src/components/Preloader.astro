@@ -1,0 +1,44 @@
+---
+// Intro de menos de 1.5 s: el árbol se dibuja, las hojas aparecen y una cortina verde sube.
+// Solo en la primera visita de la sesión (clase .intro puesta en <head>). Todo en CSS:
+// arranca antes de que cargue el JS y no bloquea nada.
+---
+<div class="pre" aria-hidden="true">
+  <svg class="pre__arbol" viewBox="0 0 120 120" width="120" height="120">
+    <path class="pre__trazo" pathLength="1" d="M60 110V58M60 78L44 62M60 70l18-18M60 92l-14-10M60 86l12-8" />
+    <path class="pre__trazo pre__trazo--suelo" pathLength="1" d="M24 110h72" />
+    <g class="pre__hojas">
+      <path style="--i:0" fill="#03AE89" d="M40 60c-8-2-12-8-12-14 7 0 13 4 14 12z" />
+      <path style="--i:1" fill="#03AE89" d="M46 44c-3-7-1-14 4-18 3 6 3 13-2 18z" />
+      <path style="--i:2" fill="#FE7500" d="M64 40c2-10 9-16 18-17-1 9-7 16-17 18z" />
+      <path style="--i:3" fill="#03AE89" d="M80 52c6-4 13-4 18 0-5 4-12 5-18 1z" />
+      <path style="--i:4" fill="#03AE89" d="M74 30c1-6 5-10 10-11 0 6-4 10-10 11z" />
+      <path style="--i:5" fill="#005433" d="M58 30c-4-5-4-11 0-15 3 4 3 10 0 15z" />
+    </g>
+  </svg>
+</div>
+
+<style>
+  .pre { display: none; }
+  :global(html.intro) .pre {
+    display: grid; place-items: center;
+    position: fixed; inset: 0; z-index: 300;
+    background: var(--verde-900);
+    animation: pre-cortina .7s var(--ease) 1.05s forwards;
+  }
+  .pre__trazo {
+    fill: none; stroke: var(--hueso); stroke-width: 2; stroke-linecap: round;
+    stroke-dasharray: 1; stroke-dashoffset: 1;
+    animation: pre-trazo .7s var(--ease) .1s forwards;
+  }
+  .pre__trazo--suelo { stroke: #B9805F; animation-delay: 0s; }
+  .pre__hojas path {
+    transform-box: fill-box; transform-origin: center;
+    transform: scale(0); opacity: 0;
+    animation: pre-hoja .45s cubic-bezier(.34, 1.56, .64, 1) forwards;
+    animation-delay: calc(.55s + var(--i) * .06s);
+  }
+  @keyframes pre-trazo { to { stroke-dashoffset: 0; } }
+  @keyframes pre-hoja { to { transform: scale(1); opacity: 1; } }
+  @keyframes pre-cortina { to { transform: translateY(-100%); visibility: hidden; } }
+</style>

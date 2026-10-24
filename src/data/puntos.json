@@ -1,0 +1,8 @@
+[
+  { "categoria": "Transporte", "puntos": [ { "nombre": "Línea 3 del Metro", "distancia": null }, { "nombre": "Estación de gasolina", "distancia": null } ] },
+  { "categoria": "Educación", "puntos": [ { "nombre": "Escuelas y colegios", "distancia": null }, { "nombre": "Centros educativos", "distancia": null } ] },
+  { "categoria": "Salud", "puntos": [ { "nombre": "Farmacias", "distancia": null }, { "nombre": "Centros de salud", "distancia": null } ] },
+  { "categoria": "Supermercados", "puntos": [ { "nombre": "Supermercados", "distancia": null }, { "nombre": "Minisúper", "distancia": null } ] },
+  { "categoria": "Comercio", "puntos": [ { "nombre": "Centros comerciales", "distancia": null }, { "nombre": "Restaurantes", "distancia": null }, { "nombre": "Ferreterías", "distancia": null } ] },
+  { "categoria": "Seguridad", "puntos": [ { "nombre": "Estación de policía", "distancia": null } ] }
+]

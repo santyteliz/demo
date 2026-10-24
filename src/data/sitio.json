@@ -1,0 +1,49 @@
+{
+  "nombre": "Praderas de Arraiján",
+  "desarrollador": "Grupo Legacy Inmobiliaria",
+  "eslogan": "Tu casa, tu espacio, tu nuevo estilo de vida.",
+  "precioDesde": "$88,997",
+  "ubicacion": "Arraiján, Panamá Oeste",
+  "distancia": "34 km de la Ciudad de Panamá",
+  "contacto": {
+    "direccion": "Vía España, PH Domino, Planta Baja Local #3, Ciudad de Panamá",
+    "telefono": { "texto": "(507) 381-2102", "tel": "+5073812102" },
+    "celulares": [
+      { "texto": "6030-6736", "tel": "+50760306736" },
+      { "texto": "6532-6708", "tel": "+50765326708" }
+    ],
+    "correos": ["ventas@glegacypanama.com", "ventas2@glegacypanama.com"],
+    "whatsapp": "",
+    "whatsappConfirmar": true
+  },
+  "redes": [
+    { "nombre": "@praderasdearraijan", "url": "https://www.instagram.com/praderasdearraijan/" },
+    { "nombre": "@grupolegacypty", "url": "https://www.instagram.com/grupolegacypty/" }
+  ],
+  "mapa": {
+    "comoLlegar": "https://maps.app.goo.gl/Y9pMZ27Hbsxb9PSAA",
+    "embed": "https://www.google.com/maps?q=Praderas+de+Arraij%C3%A1n,+Arraij%C3%A1n,+Panam%C3%A1&z=14&output=embed",
+    "embedConfirmar": true
+  },
+  "agenda": {
+    "diasAdelante": 14,
+    "diasExcluidos": [0],
+    "horas": ["9:00 a. m.", "10:30 a. m.", "12:00 m.", "2:00 p. m.", "3:30 p. m."],
+    "confirmar": true
+  },
+  "motivos": ["Visitar la casa modelo", "Asesoría de financiamiento", "Información general"],
+  "testimonios": [
+    { "titulo": "Video de lanzamiento oficial", "meta": "Praderas de Arraiján · YouTube", "youtubeId": "ZeGqq3WNfF0", "foto": "proyecto/aerea-render-proyecto.jpg", "confirmar": false },
+    { "titulo": "Historia de residente", "meta": "Mi Historia en Praderas · Ep. 1", "youtubeId": null, "foto": "proyecto/interior-sala-comedor-home.jpg", "confirmar": true },
+    { "titulo": "Historia de residente", "meta": "Mi Historia en Praderas · Ep. 2", "youtubeId": null, "foto": "modelo-unifamiliar/exterior-unifamiliar.jpg", "confirmar": true },
+    { "titulo": "Historia de residente", "meta": "Mi Historia en Praderas · Ep. 3", "youtubeId": null, "foto": "modelo-duplex/sala-duplex.jpg", "confirmar": true }
+  ],
+  "pasos": [
+    { "titulo": "Agenda tu visita", "desc": "Conoce la casa modelo y el proyecto con un asesor." },
+    { "titulo": "Elige y separa", "desc": "Escoges tu modelo y separas tu casa.", "confirmar": "Monto de separación" },
+    { "titulo": "Precalifica", "desc": "Te acompañamos con el banco para tu crédito hipotecario." },
+    { "titulo": "Firma", "desc": "Promesa de compraventa y trámites.", "confirmar": "Detalle de trámites" },
+    { "titulo": "Recibe tus llaves", "desc": "Entrega de tu casa y bienvenida a la comunidad." }
+  ],
+  "pasosConfirmar": true
+}

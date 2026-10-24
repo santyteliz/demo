@@ -1,0 +1,311 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Foto from '../../components/Foto.astro';
+import Icon from '../../components/Icon.astro';
+import Confirmar from '../../components/Confirmar.astro';
+import Calculadora from '../../components/Calculadora.astro';
+import Agenda from '../../components/Agenda.astro';
+import modelos from '../../data/modelos.json';
+import { foto } from '../../lib/fotos';
+import { whatsappUrl, mensajeWhatsapp } from '../../lib/sitio';
+
+export function getStaticPaths() {
+  return modelos.map((m) => ({ params: { slug: m.slug } }));
+}
+
+const { slug } = Astro.params;
+const m = modelos.find((x) => x.slug === slug)!;
+const indice = modelos.indexOf(m);
+const otros = modelos.filter((x) => x.slug !== slug);
+
+const ficha = [
+  { icono: 'recamaras', label: 'Recámaras', ...m.recamaras },
+  { icono: 'banos', label: 'Baños', ...m.banos },
+  { icono: 'm2', label: 'Construcción', valor: m.m2.valor === '—' ? '— m²' : `${m.m2.valor} m²`, confirmar: m.m2.confirmar },
+  { icono: 'estacionamiento', label: 'Estacionamientos', ...m.estacionamientos },
+  { icono: 'casa', label: 'Plantas', ...m.plantas },
+  { icono: 'precio', label: 'Precio desde', valor: m.precio.texto, confirmar: m.precio.confirmar },
+] as const;
+
+// Mosaico editorial asimétrico (columna / fila en una grilla de 6 columnas)
+const mosaico = [
+  { col: '1 / 5', row: 'span 4', r: '28px' },
+  { col: '5 / 7', row: 'span 2', r: '28px 28px 28px 8px' },
+  { col: '5 / 7', row: 'span 2', r: '24px' },
+  { col: '1 / 3', row: 'span 3', r: '24px' },
+  { col: '3 / 7', row: 'span 3', r: '8px 28px 28px 28px' },
+];
+// URLs grandes para el lightbox (generadas en el build)
+const grandes = await Promise.all(m.galeria.map((g) => getImage({ src: foto(g.src), width: 1800, format: 'webp', quality: 78 })));
+
+const jsonLd = [{
+  '@context': 'https://schema.org',
+  '@type': 'SingleFamilyResidence',
+  name: `Modelo ${m.nombre} · Praderas de Arraiján`,
+  description: m.descripcion,
+  ...(m.recamaras.confirmar ? {} : { numberOfBedrooms: Number(m.recamaras.valor) }),
+  containedInPlace: { '@type': 'Residence', name: 'Praderas de Arraiján', address: { '@type': 'PostalAddress', addressLocality: 'Arraiján', addressRegion: 'Panamá Oeste', addressCountry: 'PA' } },
+}];
+---
+<Base
+  titulo={`Modelo ${m.nombre} · Casas en Arraiján · Praderas de Arraiján`}
+  descripcion={m.seoDescripcion}
+  ogFoto={m.fotoPrincipal}
+  modelo={m.nombre}
+  jsonLd={jsonLd}
+>
+  <!-- HERO -->
+  <section class="mh on-dark" aria-labelledby="mh-t">
+    <div class="mh__marco" style={`view-transition-name: foto-${m.slug}`}>
+      <Foto src={m.fotoPrincipal} alt={m.fotoPrincipalAlt} prioridad sizes="100vw" class="cubre mh__img" />
+      <span class="mh__velo" aria-hidden="true"></span>
+      <div class="mh__txt">
+        <div>
+          <p class="mh__over hero-in">Modelo 0{indice + 1} · {m.tipo}</p>
+          <h1 id="mh-t" class="mh__nombre">
+            {m.nombreB
+              ? <><span class="linea"><span>{m.nombreA}</span></span><span class="linea"><em style="--d:.1s">{m.nombreB}</em></span></>
+              : <span class="linea"><span>{m.nombreA}<em>.</em></span></span>}
+          </h1>
+        </div>
+        {m.recorrido360 && (
+          <a class="mh__360" href="#recorrido"><span aria-hidden="true"><Icon name="r360" /></span>Recorrido virtual 360</a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap mp">
+    <div class="mp__contenido">
+      <!-- FICHA -->
+      <section class="mp__sec" aria-labelledby="ficha-t">
+        <h2 id="ficha-t" class="overline">Ficha técnica</h2>
+        <dl class="ficha">
+          {ficha.map((f) => (
+            <div>
+              <dt><Icon name={f.icono} size={26} />{f.label}</dt>
+              <dd>{f.valor}{f.confirmar && <span class="ficha__conf"><Confirmar /></span>}</dd>
+            </div>
+          ))}
+        </dl>
+        <p class="mp__intro display" data-split>{m.descripcion.split(':')[0]}{m.descripcion.includes(':') && <>: <em>{m.descripcion.split(':').slice(1).join(':').trim()}</em></>}</p>
+      </section>
+
+      <!-- GALERÍA -->
+      <section class="mp__sec" aria-labelledby="gal-t">
+        <div class="mp__head">
+          <h2 id="gal-t" class="display">Por <em>dentro.</em></h2>
+          <p class="muted">Toca una foto para verla grande {m.galeriaConfirmar && <Confirmar texto="Fotos por modelo" />}</p>
+        </div>
+        <ul role="list" class="galeria" data-galeria>
+          {m.galeria.map((g, i) => (
+            <li style={`grid-column:${mosaico[i % 5].col}; grid-row:${mosaico[i % 5].row}; --r:${mosaico[i % 5].r}`} data-reveal>
+              <button type="button" class="galeria__btn hover-zoom" data-lightbox={i} data-grande={grandes[i].src} data-alt={g.alt} data-cursor="Ver" aria-label={`Ampliar foto: ${g.alt}`}>
+                <Foto src={g.src} alt={g.alt} widths={[480, 768, 1080]} sizes={i === 0 || i === 4 ? '(min-width: 1024px) 50vw, 100vw' : '(min-width: 1024px) 25vw, 50vw'} class="cubre" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <!-- PLANO -->
+      <section class="mp__sec" aria-labelledby="plano-t" data-plano>
+        <div class="mp__head">
+          <h2 id="plano-t" class="display">El <em>plano.</em></h2>
+          {m.planos.length > 1 && (
+            <div class="plano__tabs" role="tablist" aria-label="Planta">
+              {m.planos.map((p, i) => (
+                <button type="button" role="tab" class="plano__tab" aria-selected={i === 0 ? 'true' : 'false'} aria-controls="plano-vista" data-plano-tab={i}>{p.nombre}</button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div class="plano" id="plano-vista" data-plano-vista>
+          {m.planos.map((p, i) => (
+            <div class="plano__lamina" data-plano-lamina={i} hidden={i !== 0}>
+              <Foto src={p.src} alt={p.alt} widths={[768, 1080, 1600]} sizes="(min-width: 1024px) 60vw, 100vw" class="plano__img" />
+            </div>
+          ))}
+          <div class="plano__zoom">
+            <button type="button" data-plano-mas aria-label="Acercar plano"><Icon name="mas" size={18} /></button>
+            <button type="button" data-plano-menos aria-label="Alejar plano"><Icon name="menos" size={18} /></button>
+          </div>
+          <p class="plano__ayuda">Arrastra para moverte por el plano</p>
+          {m.planoConfirmar && <span class="plano__conf"><Confirmar texto={m.planoConfirmar} /></span>}
+        </div>
+      </section>
+
+      <!-- RECORRIDO 360 -->
+      {m.recorrido360 && (
+        <section class="mp__sec" id="recorrido" aria-labelledby="rec-t">
+          <div class="r360" data-r360={m.recorrido360}>
+            <button type="button" class="r360__portada hover-zoom" data-r360-cargar>
+              <Foto src={m.fotoSecundaria} alt="" widths={[768, 1080, 1440]} sizes="(min-width: 1024px) 60vw, 100vw" class="cubre" />
+              <span class="r360__velo" aria-hidden="true"></span>
+              <span class="r360__txt on-dark">
+                <span class="r360__ico" aria-hidden="true"><span><Icon name="r360" size={34} /></span></span>
+                <span id="rec-t" class="r360__t display">Camina por {m.nombre} <em>sin salir de casa.</em></span>
+                <span class="r360__s">Recorrido virtual 360 · se carga al tocar</span>
+              </span>
+            </button>
+          </div>
+        </section>
+      )}
+    </div>
+
+    <!-- CTA LATERAL FIJO -->
+    <aside class="mp__aside" aria-label={`Agenda tu visita al modelo ${m.nombre}`}>
+      <p class="overline">Modelo {m.nombre}</p>
+      <p class="mp__precio"><span>Precio desde</span><strong>{m.precio.texto} {m.precio.confirmar && <Confirmar />}</strong></p>
+      <p class="mp__aside-txt">Recorre la casa modelo con un asesor y sal con tu cuota estimada.</p>
+      <a class="btn btn--lg btn--cta" href="#agenda" data-magnetic data-track="agendar"><Icon name="agenda" size={20} />Agenda tu visita<span class="btn-fill"></span></a>
+      <a class="btn btn--borde" href="#cuota" data-magnetic>Calcula tu cuota<span class="btn-fill"></span></a>
+      <a class="mp__wa" href={whatsappUrl(mensajeWhatsapp(m.nombre))} target="_blank" rel="noopener" data-track="whatsapp" data-whatsapp>
+        <span class="mp__wa-ico" aria-hidden="true"><Icon name="whatsapp" /></span>
+        <span><strong>Escríbenos por WhatsApp</strong><small>“Hola, me interesa el modelo {m.nombre}…”</small></span>
+      </a>
+    </aside>
+  </div>
+
+  <Calculadora preseleccion={m.slug} />
+  <div class="mp__espacio"></div>
+  <Agenda modelo={m.slug} foto={m.galeria[1].src} />
+
+  <!-- OTROS MODELOS -->
+  <section class="sec sec--arena otros" aria-labelledby="otros-t">
+    <div class="wrap">
+      <h2 id="otros-t" class="display h2" data-split>Otros <em>modelos.</em></h2>
+      <div class="otros__grid">
+        {otros.map((o) => (
+          <a class="otros__card hover-zoom on-dark" href={`/modelos/${o.slug}`} style={`view-transition-name: foto-${o.slug}`}>
+            <Foto src={o.fotoPrincipal} alt={o.fotoPrincipalAlt} widths={[480, 768, 1080]} sizes="(min-width: 1024px) 45vw, 100vw" class="cubre" />
+            <span class="otros__velo" aria-hidden="true"></span>
+            <span class="otros__txt">
+              <span class="otros__tipo">0{modelos.indexOf(o) + 1} · {o.tipoCorto}</span>
+              <span class="otros__nombre">{o.nombreA}{o.nombreB && <em> {o.nombreB}</em>}</span>
+            </span>
+            <span class="otros__over over">
+              <span>{o.recamaras.confirmar ? 'Recámaras, m² y precio' : `${o.recamaras.valor} recámaras · ${o.plantas.valor} plantas`} {o.recamaras.confirmar && <Confirmar />}</span>
+              <span class="otros__ver">Ver modelo <Icon name="flecha" size={18} class="arrow-move" /></span>
+            </span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <dialog class="lb" data-lightbox-modal aria-label="Galería ampliada">
+    <img class="lb__img" alt="" data-lightbox-img />
+    <p class="lb__pie" data-lightbox-pie></p>
+    <button type="button" class="lb__btn lb__cerrar" data-lightbox-cerrar><span class="sr-only">Cerrar galería</span><Icon name="cerrar" size={20} /></button>
+    <button type="button" class="lb__btn lb__prev" data-lightbox-prev><span class="sr-only">Foto anterior</span><Icon name="flecha" size={20} /></button>
+    <button type="button" class="lb__btn lb__next" data-lightbox-next><span class="sr-only">Foto siguiente</span><Icon name="flecha" size={20} /></button>
+  </dialog>
+</Base>
+
+<style>
+  .mh { padding: 104px 16px 0; }
+  .mh__marco { position: relative; height: min(78svh, 760px); min-height: 520px; border-radius: 36px; overflow: hidden; color: var(--hueso); }
+  .mh__img { object-position: 50% 60%; }
+  .mh__velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 47 35 / 0) 40%, rgb(11 47 35 / .82) 100%); }
+  .mh__txt { position: absolute; left: 5%; right: 5%; bottom: clamp(1.5rem, 4vw, 3rem); display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+  .mh__over { position: relative; z-index: 1; margin-bottom: clamp(18px, 2.5vw, 32px); font-size: .8125rem; letter-spacing: .3em; font-weight: 600; text-transform: uppercase; }
+  .mh__nombre { font-family: var(--font-display); font-weight: 400; font-size: clamp(4.5rem, min(14vw, 24svh), 15rem); line-height: .9; letter-spacing: -.04em; }
+  .mh__nombre em { color: var(--tierra-clara); }
+  .mh__360 { display: inline-flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 24px 0 8px; border-radius: var(--r-pill); background: rgb(250 247 241 / .94); color: var(--verde-900); text-decoration: none; font-weight: 700; font-size: .9375rem; }
+  .mh__360 > span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--verde-900); color: var(--hueso); }
+
+  .mp { display: flex; flex-wrap: wrap; gap: clamp(2.5rem, 5vw, 4rem); align-items: flex-start; }
+  .mp__contenido { flex: 999 1 640px; min-width: 0; }
+  .mp__sec { padding-top: clamp(3.5rem, 7vw, 5rem); }
+  .mp__sec > .overline { margin-bottom: 32px; }
+  .mp__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
+  .mp__head .display { font-size: clamp(2.5rem, 4vw, 3.25rem); }
+
+  .ficha { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--linea); }
+  .ficha > div { position: relative; display: flex; flex-direction: column; gap: 4px; padding: 24px 20px 24px 40px; border-bottom: 1px solid var(--linea); }
+  .ficha dt { font-size: .8125rem; font-weight: 600; color: var(--gris-texto); }
+  .ficha dt :global(svg) { position: absolute; left: 0; top: 26px; color: var(--pda-verde); }
+  .ficha dd { font-family: var(--font-display); font-size: clamp(1.625rem, 2.4vw, 2.125rem); line-height: 1.05; }
+  .ficha__conf { display: block; margin-top: 6px; line-height: 1; }
+  .mp__intro { margin-top: 40px; max-width: 40rem; font-size: clamp(1.5rem, 2.4vw, 1.875rem); line-height: 1.3; }
+
+  .galeria { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-rows: clamp(80px, 9vw, 120px); gap: 14px; }
+  .galeria li { position: relative; border-radius: var(--r); overflow: hidden; }
+  .galeria__btn { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; background: var(--arena-2); cursor: zoom-in; }
+
+  .plano__tabs { display: flex; gap: 6px; padding: 6px; border-radius: var(--r-pill); background: var(--arena); }
+  .plano__tab { min-height: 44px; padding: 0 18px; border: 0; border-radius: var(--r-pill); background: transparent; font-weight: 600; font-size: .875rem; }
+  .plano__tab[aria-selected='true'] { background: var(--verde-900); color: var(--hueso); }
+  .plano { position: relative; height: clamp(420px, 50vw, 620px); border-radius: var(--r-foto); overflow: hidden; background: #fff; border: 1px solid var(--linea-suave); touch-action: none; cursor: grab; }
+  .plano.is-arrastrando { cursor: grabbing; }
+  .plano__lamina { position: absolute; inset: 24px; }
+  .plano__lamina :global(.plano__img) { width: 100%; height: 100%; object-fit: contain; transform-origin: center; transition: transform .6s var(--ease); user-select: none; -webkit-user-drag: none; }
+  .plano.is-arrastrando .plano__lamina :global(.plano__img) { transition: none; }
+  .plano__zoom { position: absolute; right: 20px; bottom: 20px; display: flex; flex-direction: column; gap: 6px; padding: 6px; border-radius: var(--r-pill); background: var(--hueso); border: 1px solid var(--linea-suave); }
+  .plano__zoom button { width: 44px; height: 44px; border-radius: 50%; border: 0; display: grid; place-items: center; background: transparent; color: var(--verde-900); }
+  .plano__zoom button:first-child { background: var(--verde-900); color: var(--hueso); }
+  .plano__ayuda { position: absolute; left: 20px; top: 20px; padding: 6px 12px; border-radius: var(--r-pill); background: rgb(250 247 241 / .9); font-size: .75rem; font-weight: 600; color: var(--gris-texto); }
+  .plano__conf { position: absolute; left: 20px; bottom: 20px; }
+
+  .r360 { position: relative; height: clamp(380px, 40vw, 520px); border-radius: var(--r-foto); overflow: hidden; background: var(--verde-900); }
+  .r360 :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .r360__portada { position: absolute; inset: 0; width: 100%; padding: 0; border: 0; color: var(--hueso); }
+  .r360__velo { position: absolute; inset: 0; background: rgb(11 47 35 / .5); }
+  .r360__txt { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: 24px; text-align: center; }
+  .r360__ico { width: 112px; height: 112px; border-radius: 50%; border: 1px solid rgb(250 247 241 / .6); display: grid; place-items: center; transition: transform .6s var(--ease); }
+  .r360__ico > span { width: 84px; height: 84px; border-radius: 50%; display: grid; place-items: center; background: var(--hueso); color: var(--verde-900); }
+  .r360__portada:hover .r360__ico { transform: scale(1.08); }
+  .r360__t { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1.05; }
+  .r360__s { font-size: .9375rem; color: rgb(250 247 241 / .85); }
+
+  .mp__aside {
+    flex: 1 1 320px; max-width: 380px; position: sticky; top: 120px; margin-top: clamp(3.5rem, 7vw, 5rem);
+    display: flex; flex-direction: column; gap: 16px; padding: 28px; border-radius: 30px; background: var(--arena);
+  }
+  .mp__aside .overline { font-size: .75rem; letter-spacing: .24em; }
+  .mp__precio { display: flex; flex-direction: column; gap: 4px; }
+  .mp__precio span { font-size: .8125rem; font-weight: 600; color: var(--gris-texto); }
+  .mp__precio strong { font-family: var(--font-display); font-weight: 400; font-size: 2.75rem; line-height: 1; }
+  .mp__aside-txt { font-size: .9375rem; line-height: 1.55; color: var(--tinta-2); }
+  .mp__wa { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 18px; background: var(--hueso); color: var(--tinta); text-decoration: none; }
+  .mp__wa strong { display: block; font-size: .875rem; }
+  .mp__wa small { display: block; font-size: .75rem; color: var(--gris-texto); }
+  .mp__wa-ico { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--pda-verde); color: var(--hueso); }
+  .mp__espacio { height: clamp(1rem, 3vw, 2rem); }
+
+  .otros__grid { margin-top: 48px; display: flex; gap: 20px; flex-wrap: wrap; }
+  .otros__card { position: relative; flex: 1 1 420px; height: clamp(360px, 36vw, 460px); border-radius: 30px; color: var(--hueso); text-decoration: none; }
+  .otros__velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 47 35 / 0) 40%, rgb(11 47 35 / .8) 100%); }
+  .otros__txt { position: absolute; left: 32px; bottom: 32px; display: flex; flex-direction: column; gap: 6px; }
+  .otros__tipo { font-size: .75rem; letter-spacing: .24em; font-weight: 700; text-transform: uppercase; }
+  .otros__nombre { font-family: var(--font-display); font-size: clamp(3rem, 5vw, 4rem); line-height: .9; }
+  .otros__nombre em { color: var(--tierra-clara); }
+  .otros__over { position: absolute; left: 16px; right: 16px; bottom: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 20px 24px; border-radius: 22px; background: var(--hueso); color: var(--tinta); font-size: .875rem; }
+  .otros__ver { display: inline-flex; align-items: center; gap: 6px; font-weight: 700; color: var(--pda-tierra); white-space: nowrap; }
+
+  .lb { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 56px 72px; border: 0; background: transparent; }
+  .lb[open] { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; }
+  .lb::backdrop { background: rgb(11 47 35 / .95); }
+  .lb__img { max-width: 100%; max-height: calc(100% - 40px); border-radius: 20px; object-fit: contain; }
+  .lb__pie { color: var(--hueso); font-size: .9375rem; }
+  .lb__btn { position: absolute; width: 52px; height: 52px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--hueso); color: var(--verde-900); }
+  .lb__cerrar { top: 20px; right: 20px; }
+  .lb__prev { left: 20px; top: 50%; margin-top: -26px; }
+  .lb__prev :global(svg) { transform: rotate(180deg); }
+  .lb__next { right: 20px; top: 50%; margin-top: -26px; }
+
+  @media (max-width: 1023px) {
+    .mh { padding-top: 84px; padding-inline: 8px; }
+    .mp__aside { position: static; max-width: none; }
+    .ficha { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 767px) {
+    .galeria { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 150px; }
+    .galeria li { grid-column: auto !important; grid-row: span 1 !important; }
+    .galeria li:first-child { grid-column: 1 / -1 !important; grid-row: span 2 !important; }
+    .lb { padding: 72px 12px; }
+    .lb__prev, .lb__next { top: auto; bottom: 16px; margin: 0; }
+  }
+</style>

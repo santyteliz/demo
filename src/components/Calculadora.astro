@@ -1,0 +1,161 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Confirmar from './Confirmar.astro';
+import hojaBlanca from '../assets/marca/praderas-hoja-blanca.png';
+import modelos from '../data/modelos.json';
+import fin from '../data/finanzas.json';
+import { moneda } from '../lib/sitio';
+
+interface Props { preseleccion?: string; }
+const { preseleccion = modelos[0].slug } = Astro.props;
+const actual = modelos.find((m) => m.slug === preseleccion) ?? modelos[0];
+const unico = Astro.props.preseleccion !== undefined;
+
+const config = {
+  modelos: modelos.map((m) => ({ slug: m.slug, nombre: m.nombre, precio: m.precio.valor })),
+  tasa: fin.tasaAnual,
+  plazo: fin.plazoPorDefecto,
+  abono: fin.abonoPorDefectoPct,
+  min: fin.abonoMinimoPct,
+  max: fin.abonoMaximoPct,
+};
+// Valores iniciales calculados en el servidor: el número se ve aunque el JS tarde.
+const precio = actual.precio.valor;
+const abono = precio * fin.abonoPorDefectoPct / 100;
+const P = precio - abono;
+const i = fin.tasaAnual / 100 / 12;
+const n = fin.plazoPorDefecto * 12;
+const cuota = P * i / (1 - Math.pow(1 + i, -n));
+---
+<section id="cuota" class="sec sec--oscura calc on-dark" aria-labelledby="calc-t" data-calc data-config={JSON.stringify(config)}>
+  <Image src={hojaBlanca} alt="" width={640} class="calc__hoja" aria-hidden="true" data-parallax="-0.1" />
+  <div class="wrap calc__grid">
+    <div class="calc__form">
+      <p class="overline">Calculadora</p>
+      <h2 id="calc-t" class="display h2" data-split>
+        {unico ? <>Tu cuota para <em>{actual.nombre}.</em></> : <>Calcula tu cuota<br /><em>en un minuto.</em></>}
+      </h2>
+
+      <form class="calc__campos" data-calc-form novalidate>
+        <fieldset class:list={{ 'sr-only': unico }}>
+          <legend class="calc__label">Modelo</legend>
+          <div class="chips">
+            {modelos.map((m) => (
+              <button type="button" class="chip" aria-pressed={m.slug === actual.slug ? 'true' : 'false'} data-calc-mod={m.slug}>{m.nombre}</button>
+            ))}
+          </div>
+        </fieldset>
+
+        <div>
+          <div class="calc__fila">
+            <label for={`abono-rango-${actual.slug}`} class="calc__label">Abono inicial</label>
+            <span class="calc__min">Mínimo {fin.abonoMinimoPct} % <Confirmar /></span>
+          </div>
+          <input class="calc__rango" id={`abono-rango-${actual.slug}`} type="range" min={fin.abonoMinimoPct} max={fin.abonoMaximoPct} step="1" value={fin.abonoPorDefectoPct} data-calc-rango aria-describedby={`abono-txt-${actual.slug}`} />
+          <div class="calc__abono-campos">
+            <label class="calc__mini">
+              <span>En dólares</span>
+              <span class="calc__mini-input"><span aria-hidden="true">$</span><input type="text" inputmode="numeric" value={Math.round(abono).toLocaleString('en-US')} data-calc-monto /></span>
+            </label>
+            <label class="calc__mini">
+              <span>En porcentaje</span>
+              <span class="calc__mini-input"><input type="text" inputmode="decimal" value={fin.abonoPorDefectoPct} data-calc-pct /><span aria-hidden="true">%</span></span>
+            </label>
+          </div>
+        </div>
+
+        <fieldset>
+          <legend class="calc__label">Plazo {fin.confirmar && <Confirmar />}</legend>
+          <div class="chips">
+            {fin.plazosAnios.map((y) => (
+              <button type="button" class="chip" aria-pressed={y === fin.plazoPorDefecto ? 'true' : 'false'} data-calc-plazo={y}>{y} años</button>
+            ))}
+          </div>
+        </fieldset>
+
+        {fin.tasaEditable ? (
+          <div class="calc__tasa">
+            <label for={`tasa-${actual.slug}`} class="calc__label">Tasa anual</label>
+            <span class="calc__mini-input calc__mini-input--tasa"><input id={`tasa-${actual.slug}`} type="text" inputmode="decimal" value={fin.tasaAnual} data-calc-tasa /><span aria-hidden="true">%</span></span>
+            <span class="calc__aviso">Valor de referencia, no es una tasa real <Confirmar /></span>
+          </div>
+        ) : null}
+      </form>
+
+      <ul role="list" class="calc__tips">
+        <li><strong>Capacidad de pago.</strong> Los bancos suelen pedir que la cuota no pase de un porcentaje de tus ingresos. <Confirmar /></li>
+        <li><strong>Historial crediticio.</strong> Revísalo antes de precalificar: te abre más puertas.</li>
+        <li><strong>Abono.</strong> Un abono mayor baja tu cuota y lo que pagas de intereses.</li>
+        <li><strong>Gastos adicionales.</strong> Cierre, notaría y seguros van aparte. <Confirmar /></li>
+      </ul>
+    </div>
+
+    <div class="calc__resultado" aria-live="polite">
+      <div class="calc__res-top">
+        <p class="overline">Tu cuota estimada</p>
+        <p class="calc__res-meta"><span data-calc-nombre>{actual.nombre}</span> · <span data-calc-anios>{fin.plazoPorDefecto}</span> años</p>
+      </div>
+      <p class="calc__cuota"><span data-calc-cuota>{moneda(cuota)}</span><small>/ mes</small></p>
+      <dl class="calc__desglose">
+        <div><dt>Precio de referencia <Confirmar texto="por modelo" /></dt><dd data-calc-precio>{moneda(precio)}</dd></div>
+        <div><dt>Abono inicial</dt><dd data-calc-abono id={`abono-txt-${actual.slug}`}>{moneda(abono)}</dd></div>
+        <div><dt>Monto a financiar</dt><dd data-calc-financiar>{moneda(P)}</dd></div>
+      </dl>
+      <a class="btn btn--lg btn--cta calc__cta" href="#agenda" data-calc-asesoria data-magnetic data-track="agendar">Quiero que me asesoren con esta cuota<span class="btn-fill"></span></a>
+      <p class="calc__legal">{fin.legal}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .calc { overflow: hidden; }
+  .calc__hoja { position: absolute; left: -90px; bottom: -60px; width: 320px; height: auto; opacity: .06; transform: rotate(-24deg); }
+  .calc__grid { position: relative; display: flex; flex-wrap: wrap; gap: clamp(2.5rem, 5vw, 4rem); }
+  .calc__form { flex: 1 1 520px; min-width: 0; }
+  .calc__form .overline { margin-bottom: 20px; }
+  .calc__campos { margin-top: 48px; display: flex; flex-direction: column; gap: 36px; }
+  .calc__campos fieldset { border: 0; margin: 0; padding: 0; }
+  .calc__label { display: block; margin-bottom: 14px; font-size: .75rem; letter-spacing: .24em; font-weight: 700; text-transform: uppercase; color: rgb(250 247 241 / .72); }
+  .calc__fila { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .calc__min { font-size: .75rem; color: rgb(250 247 241 / .6); }
+  .calc__rango { width: 100%; height: 28px; accent-color: var(--pda-teal); }
+  .calc__abono-campos { margin-top: 14px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .calc__mini { display: flex; flex-direction: column; gap: 6px; font-size: .75rem; color: rgb(250 247 241 / .72); font-weight: 600; }
+  .calc__mini-input {
+    display: flex; align-items: center; gap: 6px; min-height: 50px; padding: 0 16px;
+    border: 1px solid rgb(250 247 241 / .3); border-radius: var(--r-input); font-size: 1rem; font-weight: 700; color: var(--hueso);
+    transition: border-color .3s var(--ease);
+  }
+  .calc__mini-input:focus-within { border-color: var(--pda-teal); }
+  .calc__mini-input input { width: 100%; min-width: 0; border: 0; background: transparent; font-weight: 700; color: var(--hueso); outline: none; }
+  .calc__mini-input--tasa { width: 110px; }
+  .calc__tasa { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .calc__tasa .calc__label { margin: 0; }
+  .calc__aviso { font-size: .8125rem; color: #FDBA74; font-weight: 600; }
+
+  .calc__tips {
+    margin-top: 48px; padding-top: 28px; border-top: 1px solid rgb(250 247 241 / .16);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px 32px;
+    font-size: .875rem; line-height: 1.5; color: rgb(250 247 241 / .78);
+  }
+  .calc__tips strong { color: var(--hueso); }
+
+  .calc__resultado {
+    flex: 1 1 420px; min-width: 0; align-self: stretch;
+    display: flex; flex-direction: column; gap: 28px; padding: clamp(1.75rem, 3.5vw, 2.75rem);
+    background: var(--hueso); color: var(--tinta); border-radius: 32px 32px 32px 8px;
+  }
+  .calc__res-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .calc__resultado .overline { color: var(--pda-verde); font-size: .75rem; letter-spacing: .24em; }
+  .calc__res-meta { font-size: .8125rem; font-weight: 600; color: var(--gris-texto); }
+  .calc__cuota { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .calc__cuota span { font-family: var(--font-display); font-size: clamp(4rem, 7vw, 6.5rem); line-height: .9; letter-spacing: -.03em; color: var(--verde-900); font-variant-numeric: tabular-nums; }
+  .calc__cuota small { font-size: 1.125rem; font-weight: 600; color: var(--gris-texto); }
+  .calc__desglose { border-top: 1px solid var(--linea); }
+  .calc__desglose > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; border-bottom: 1px solid var(--linea); }
+  .calc__desglose dt { color: var(--gris-texto); font-size: .9375rem; }
+  .calc__desglose dd { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .calc__cta { margin-top: auto; width: 100%; }
+  .calc__legal { font-size: .8125rem; line-height: 1.5; color: var(--gris-texto); }
+</style>

@@ -1,0 +1,33 @@
+---
+import { Picture } from 'astro:assets';
+import { foto } from '../lib/fotos';
+
+interface Props {
+  src: string;
+  alt: string;
+  sizes?: string;
+  widths?: number[];
+  prioridad?: boolean;
+  class?: string;
+  style?: string;
+  [key: `data-${string}`]: string | undefined;
+}
+const { src, alt, sizes = '100vw', widths = [480, 768, 1080, 1440, 1920], prioridad = false, class: cls, style, ...rest } = Astro.props;
+const img = foto(src);
+const anchos = widths.filter((w) => w <= img.width);
+if (!anchos.length) anchos.push(img.width);
+---
+<Picture
+  src={img}
+  alt={alt}
+  formats={['avif', 'webp']}
+  widths={anchos}
+  sizes={sizes}
+  quality={72}
+  loading={prioridad ? 'eager' : 'lazy'}
+  decoding="async"
+  fetchpriority={prioridad ? 'high' : 'auto'}
+  class={cls}
+  style={style}
+  {...rest}
+/>

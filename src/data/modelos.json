@@ -1,0 +1,105 @@
+[
+  {
+    "slug": "roble",
+    "nombre": "Roble",
+    "nombreA": "Roble",
+    "nombreB": "",
+    "tipo": "Unifamiliar · Una planta",
+    "tipoCorto": "Una planta",
+    "descripcion": "Todo en un solo nivel, con sala comedor integrada: el espacio perfecto para convivir en familia.",
+    "seoDescripcion": "Modelo Roble: casa unifamiliar de una planta en Praderas de Arraiján, Panamá Oeste. Galería, plano, recorrido virtual 360 y calculadora de cuota.",
+    "recamaras": { "valor": "2 o 3", "confirmar": true },
+    "banos": { "valor": "—", "confirmar": true },
+    "m2": { "valor": "—", "confirmar": true },
+    "estacionamientos": { "valor": "—", "confirmar": true },
+    "plantas": { "valor": "1", "confirmar": false },
+    "precio": { "valor": 88997, "texto": "$—", "confirmar": true },
+    "fotoPrincipal": "modelo-unifamiliar/exterior-unifamiliar.jpg",
+    "fotoPrincipalAlt": "Fachada del modelo Roble, casa de una planta rodeada de árboles y jardín",
+    "fotoSecundaria": "modelo-unifamiliar/sala-comedor.jpg",
+    "fotoSecundariaAlt": "Sala comedor integrada del modelo Roble",
+    "galeria": [
+      { "src": "modelo-unifamiliar/sala-comedor.jpg", "alt": "Sala comedor integrada con luz natural" },
+      { "src": "modelo-unifamiliar/recamara-principal.jpg", "alt": "Recámara principal" },
+      { "src": "proyecto/interior-sala-home.jpg", "alt": "Sala de estar" },
+      { "src": "proyecto/interior-sala-comedor-home.jpg", "alt": "Comedor y cocina" },
+      { "src": "modelo-unifamiliar/exterior-unifamiliar.jpg", "alt": "Fachada con jardín frontal" }
+    ],
+    "galeriaConfirmar": true,
+    "planos": [
+      { "nombre": "Planta", "src": "planos/plano-unifamiliar-a.jpg", "alt": "Plano de la casa unifamiliar, variante A" }
+    ],
+    "planoConfirmar": "¿Plano A corresponde a Roble?",
+    "recorrido360": "https://inmerso3d.online/3d-model/grupo-legacy-praderas-de-arraijan-modelo-unifamiliar/fullscreen/",
+    "tagHero": "Recorrido virtual 360 disponible"
+  },
+  {
+    "slug": "cedro",
+    "nombre": "Cedro",
+    "nombreA": "Cedro",
+    "nombreB": "",
+    "tipo": "Unifamiliar · Una planta",
+    "tipoCorto": "Una planta",
+    "descripcion": "Diseño moderno y cerca de comercios: el equilibrio que buscas para tu día a día.",
+    "seoDescripcion": "Modelo Cedro: casa unifamiliar de una planta en Praderas de Arraiján, Panamá Oeste. Galería, plano y calculadora de cuota.",
+    "recamaras": { "valor": "—", "confirmar": true },
+    "banos": { "valor": "—", "confirmar": true },
+    "m2": { "valor": "—", "confirmar": true },
+    "estacionamientos": { "valor": "—", "confirmar": true },
+    "plantas": { "valor": "1", "confirmar": false },
+    "precio": { "valor": 88997, "texto": "$—", "confirmar": true },
+    "fotoPrincipal": "proyecto/interior-sala-comedor-home.jpg",
+    "fotoPrincipalAlt": "Sala comedor amplia del modelo Cedro con luz natural",
+    "fotoSecundaria": "modelo-unifamiliar/recamara-principal.jpg",
+    "fotoSecundariaAlt": "Recámara principal del modelo Cedro",
+    "galeria": [
+      { "src": "proyecto/interior-sala-comedor-home.jpg", "alt": "Sala comedor con luz natural" },
+      { "src": "modelo-unifamiliar/recamara-principal.jpg", "alt": "Recámara principal" },
+      { "src": "modelo-unifamiliar/sala-comedor.jpg", "alt": "Sala y comedor" },
+      { "src": "proyecto/interior-sala-home.jpg", "alt": "Sala de estar" },
+      { "src": "modelo-unifamiliar/exterior-unifamiliar.jpg", "alt": "Fachada de la casa unifamiliar" }
+    ],
+    "galeriaConfirmar": true,
+    "planos": [
+      { "nombre": "Planta", "src": "planos/plano-unifamiliar-b.jpg", "alt": "Plano de la casa unifamiliar, variante B" }
+    ],
+    "planoConfirmar": "¿Plano B corresponde a Cedro?",
+    "recorrido360": null,
+    "tagHero": "Fotos por modelo [CONFIRMAR]"
+  },
+  {
+    "slug": "almendro-duplex",
+    "nombre": "Almendro Dúplex",
+    "nombreA": "Almendro",
+    "nombreB": "Dúplex",
+    "tipo": "Dúplex · Dos plantas",
+    "tipoCorto": "Dúplex",
+    "descripcion": "Tu primera casa es un espacio para crear memorias, crecer en familia y construir las bases de tu futuro.",
+    "seoDescripcion": "Modelo Almendro Dúplex: casa de dos plantas y 3 recámaras en Praderas de Arraiján, Panamá Oeste. Galería, planos, recorrido virtual 360 y calculadora.",
+    "recamaras": { "valor": "3", "confirmar": false },
+    "banos": { "valor": "hasta 2.5", "confirmar": true },
+    "m2": { "valor": "—", "confirmar": true },
+    "estacionamientos": { "valor": "hasta 2 techados", "confirmar": true },
+    "plantas": { "valor": "2", "confirmar": false },
+    "precio": { "valor": 88997, "texto": "$—", "confirmar": true },
+    "fotoPrincipal": "modelo-duplex/sala-duplex.jpg",
+    "fotoPrincipalAlt": "Sala del modelo Almendro Dúplex con escalera",
+    "fotoSecundaria": "modelo-duplex/recamara-duplex-1.jpg",
+    "fotoSecundariaAlt": "Recámara del modelo Almendro Dúplex",
+    "galeria": [
+      { "src": "modelo-duplex/sala-duplex.jpg", "alt": "Sala con escalera a la planta alta" },
+      { "src": "modelo-duplex/recamara-duplex-1.jpg", "alt": "Recámara principal" },
+      { "src": "modelo-duplex/recamara-duplex-2.jpg", "alt": "Recámara secundaria" },
+      { "src": "proyecto/interior-sala-home.jpg", "alt": "Sala de estar" },
+      { "src": "proyecto/aerea-render-proyecto.jpg", "alt": "Vista aérea del proyecto" }
+    ],
+    "galeriaConfirmar": false,
+    "planos": [
+      { "nombre": "Planta baja", "src": "planos/plano-duplex-planta-baja.jpg", "alt": "Plano de la planta baja del dúplex" },
+      { "nombre": "Planta alta", "src": "planos/plano-duplex-planta-alta.jpg", "alt": "Plano de la planta alta del dúplex" }
+    ],
+    "planoConfirmar": null,
+    "recorrido360": "https://inmerso3d.online/3d-model/grupo-legacy-praderas-de-arraijan-modelo-duplex/fullscreen/",
+    "tagHero": "Recorrido virtual 360 disponible"
+  }
+]

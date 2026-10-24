@@ -1,0 +1,60 @@
+---
+import Confirmar from '../Confirmar.astro';
+import sitio from '../../data/sitio.json';
+---
+<section id="proceso" class="sec proc" aria-labelledby="proc-t" data-proceso>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="proc-t" class="display h2" data-split>De la visita<br /><em>a las llaves.</em></h2>
+      {sitio.pasosConfirmar && <Confirmar texto="Pasos exactos con Grupo Legacy" />}
+    </div>
+    <div class="proc__linea-wrap">
+      <svg class="proc__linea" viewBox="0 0 1000 8" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="0" y1="4" x2="1000" y2="4" class="proc__base" />
+        <line x1="0" y1="4" x2="1000" y2="4" class="proc__trazo" pathLength="1" data-proceso-trazo />
+      </svg>
+      <svg class="proc__linea proc__linea--v" viewBox="0 0 8 1000" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="4" y1="0" x2="4" y2="1000" class="proc__base" />
+        <line x1="4" y1="0" x2="4" y2="1000" class="proc__trazo" pathLength="1" data-proceso-trazo />
+      </svg>
+      <ol role="list" class="proc__pasos">
+        {sitio.pasos.map((p, i) => (
+          <li class="proc__paso" data-proceso-paso>
+            <span class="proc__n">{i + 1}</span>
+            <h3 class="proc__t">{p.titulo}</h3>
+            <p class="proc__d">{p.desc} {p.confirmar && <Confirmar texto={p.confirmar} />}</p>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proc__linea-wrap { position: relative; }
+  .proc__linea { position: absolute; left: 29px; right: 29px; top: 25px; width: calc(100% - 58px); height: 8px; }
+  .proc__linea--v { display: none; }
+  .proc__base { stroke: var(--linea); stroke-width: 2; }
+  .proc__trazo { stroke: var(--pda-teal); stroke-width: 2; stroke-dasharray: 1; stroke-dashoffset: 0; }
+  :global(.js) .proc__trazo { stroke-dashoffset: 1; }
+  .proc__pasos { position: relative; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 32px; }
+  .proc__paso { display: flex; flex-direction: column; gap: 18px; }
+  .proc__n {
+    width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--hueso); border: 1px solid var(--linea); color: var(--gris-texto);
+    font-family: var(--font-display); font-size: 1.375rem;
+    transition: background-color .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease);
+  }
+  .proc__paso.is-hecho .proc__n, :global(html:not(.js)) .proc__n { background: var(--pda-teal); border-color: var(--pda-teal); color: var(--verde-950); }
+  .proc__t { font-family: var(--font-display); font-weight: 400; font-size: 1.625rem; line-height: 1.1; }
+  .proc__d { font-size: .9375rem; line-height: 1.6; color: var(--gris-texto); }
+
+  @media (max-width: 1023px) {
+    .proc__linea { display: none; }
+    .proc__linea--v { display: block; left: 25px; top: 29px; width: 8px; height: calc(100% - 58px); }
+    .proc__pasos { grid-template-columns: 1fr; gap: 36px; }
+    .proc__paso { display: grid; grid-template-columns: 58px 1fr; column-gap: 20px; row-gap: 6px; }
+    .proc__n { grid-row: span 2; }
+    .proc__t { align-self: end; }
+  }
+</style>

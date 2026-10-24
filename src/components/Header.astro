@@ -1,0 +1,214 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import Foto from './Foto.astro';
+import logoOscuro from '../assets/marca/praderas-logo-para-fondo-oscuro.png';
+import logoColor from '../assets/marca/praderas-logo-color.png';
+import modelos from '../data/modelos.json';
+
+interface Props { transparente?: boolean; }
+const { transparente = false } = Astro.props;
+const ruta = Astro.url.pathname;
+const enModelo = ruta.startsWith('/modelos');
+const links = [
+  { href: '/#inicio', texto: 'Inicio' },
+  { href: '/#amenidades', texto: 'Amenidades' },
+  { href: '/#ubicacion', texto: 'Ubicación' },
+  { href: '/#proceso', texto: 'Proceso' },
+];
+---
+<header class:list={['hdr', { 'is-top': transparente, 'is-claro': !transparente }]} data-header data-transparente={transparente ? 'true' : 'false'}>
+  <div class="hdr__capsula">
+    <a class="hdr__logo" href="/" aria-label="Praderas de Arraiján, ir al inicio">
+      <Image src={logoOscuro} alt="" width={180} class="hdr__logo-img hdr__logo-img--oscuro" loading="eager" />
+      <Image src={logoColor} alt="" width={180} class="hdr__logo-img hdr__logo-img--color" loading="eager" />
+    </a>
+
+    <nav class="hdr__nav" aria-label="Principal">
+      <ul role="list">
+        <li><a class="ulink" href={links[0].href}>{links[0].texto}</a></li>
+        <li>
+          <button type="button" class="hdr__mega-btn" aria-expanded="false" aria-controls="megamenu" data-mega-btn aria-current={enModelo ? 'page' : undefined}>
+            Modelos <Icon name="chevron" size={14} class="hdr__chev" />
+          </button>
+        </li>
+        {links.slice(1).map((l) => <li><a class="ulink" href={l.href}>{l.texto}</a></li>)}
+      </ul>
+    </nav>
+
+    <div class="hdr__ctas">
+      <a class="btn btn--sm hdr__sec" href="#cuota" data-magnetic>Calcula tu cuota<span class="btn-fill"></span></a>
+      <a class="btn btn--sm btn--cta" href="#agenda" data-magnetic data-track="agendar">Agenda tu visita<span class="btn-fill"></span></a>
+    </div>
+
+    <button type="button" class="hdr__menu-btn" aria-expanded="false" aria-controls="menu-movil" data-menu-btn>
+      <span class="sr-only">Abrir menú</span>
+      <Icon name="menu" />
+    </button>
+
+    <span class="hdr__progreso" aria-hidden="true" data-progreso></span>
+  </div>
+
+  <div id="megamenu" class="mega" data-mega hidden>
+    <div class="mega__panel">
+      {modelos.map((m) => (
+        <a class="mega__card hover-zoom" href={`/modelos/${m.slug}`}>
+          <span class="mega__foto"><Foto src={m.fotoPrincipal} alt="" widths={[360, 540]} sizes="280px" class="cubre" /></span>
+          <span class="mega__info">
+            <span>
+              <span class="mega__tipo">{m.tipoCorto}</span>
+              <span class="mega__nombre">{m.nombre}</span>
+            </span>
+            <span class="mega__ver">Ver modelo <Icon name="flecha" size={18} class="arrow-move" /></span>
+          </span>
+        </a>
+      ))}
+      <div class="mega__comparar on-dark">
+        <p>¿No sabes cuál elegir? <em>Compáralos.</em></p>
+        <a href="/#comparador">Ir al comparador <Icon name="flecha" size={18} class="arrow-move" /></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Menú de celular: pantalla completa en verde-900 -->
+<div id="menu-movil" class="mmenu" role="dialog" aria-modal="true" aria-label="Menú" data-menu hidden>
+  <div class="mmenu__top">
+    <Image src={logoOscuro} alt="Praderas de Arraiján" width={150} class="mmenu__logo" />
+    <button type="button" class="mmenu__cerrar" data-menu-cerrar><span class="sr-only">Cerrar menú</span><Icon name="cerrar" size={20} /></button>
+  </div>
+  <nav aria-label="Menú principal">
+    <ol role="list" class="mmenu__links">
+      {[{ href: '/#inicio', t: 'Inicio' }, { href: '/#modelos', t: 'Modelos' }, { href: '/#amenidades', t: 'Amenidades' }, { href: '/#ubicacion', t: 'Ubicación' }, { href: '/#proceso', t: 'Proceso' }, { href: '#cuota', t: 'Calcula tu cuota' }].map((l, i) => (
+        <li style={`--i:${i}`}><a href={l.href} data-menu-link><span>0{i + 1}</span>{l.t}</a></li>
+      ))}
+    </ol>
+  </nav>
+  <ul role="list" class="mmenu__modelos" aria-label="Modelos">
+    {modelos.map((m, i) => (
+      <li style={`--i:${i + 6}`}>
+        <a href={`/modelos/${m.slug}`} data-menu-link>
+          <span class="mmenu__foto"><Foto src={m.fotoPrincipal} alt="" widths={[320]} sizes="150px" class="cubre" /></span>
+          <span class="mmenu__nombre">{m.nombre}</span>
+          <span class="mmenu__tipo">{m.tipoCorto}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .hdr {
+    position: fixed; top: 16px; left: 16px; right: 16px; z-index: 100;
+    transition: transform .6s var(--ease);
+  }
+  .hdr.is-hidden { transform: translateY(calc(-100% - 24px)); }
+  .hdr__capsula {
+    position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    padding: 10px 10px 10px 26px; border-radius: var(--r-pill);
+    border: 1px solid transparent;
+    transition: padding .5s var(--ease), background-color .5s var(--ease), border-color .5s var(--ease), box-shadow .5s var(--ease);
+  }
+  .hdr.is-top .hdr__capsula { background: transparent; border-color: rgb(250 247 241 / .22); color: var(--hueso); }
+  .hdr.is-claro .hdr__capsula {
+    background: rgb(250 247 241 / .85); border-color: var(--linea-suave); color: var(--tinta);
+    -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+    box-shadow: 0 18px 40px -30px rgb(11 47 35 / .45);
+  }
+  .hdr.is-compacto .hdr__capsula { padding-block: 6px; }
+
+  .hdr__logo { position: relative; display: block; line-height: 0; flex: none; }
+  .hdr__logo-img { height: 54px; width: auto; transition: height .5s var(--ease), opacity .4s var(--ease); }
+  .hdr.is-compacto .hdr__logo-img { height: 44px; }
+  .hdr__logo-img--color { position: absolute; left: 0; top: 0; opacity: 0; }
+  .hdr.is-claro .hdr__logo-img--color { opacity: 1; }
+  .hdr.is-claro .hdr__logo-img--oscuro { opacity: 0; }
+
+  .hdr__nav ul { display: flex; align-items: center; gap: 34px; }
+  .hdr__nav a, .hdr__mega-btn { color: inherit; font-size: .9375rem; font-weight: 500; padding: 8px 0; }
+  .hdr__mega-btn { display: inline-flex; align-items: center; gap: 6px; background: none; border: 0; }
+  .hdr__mega-btn[aria-current='page'] { font-weight: 700; }
+  .hdr__chev { transition: transform .4s var(--ease); }
+  .hdr__mega-btn[aria-expanded='true'] .hdr__chev { transform: rotate(180deg); }
+
+  .hdr__ctas { display: flex; gap: 8px; align-items: center; }
+  .hdr__sec { border-color: currentColor; color: inherit; }
+  .hdr__sec .btn-fill { background: currentColor; opacity: .12; }
+
+  .hdr__menu-btn {
+    display: none; width: 48px; height: 48px; border-radius: 50%; border: 0;
+    place-items: center; background: var(--hueso); color: var(--verde-900);
+  }
+  .hdr.is-claro .hdr__menu-btn { background: var(--verde-900); color: var(--hueso); }
+
+  .hdr__progreso {
+    position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+    background: var(--pda-teal); transform: scaleX(0); transform-origin: left;
+  }
+  .hdr.is-top .hdr__progreso { opacity: 0; }
+
+  /* Megamenú */
+  .mega { position: absolute; top: calc(100% + 12px); left: 0; right: 0; display: flex; justify-content: center; }
+  .mega[hidden] { display: none; }
+  .mega__panel {
+    width: 100%; max-width: 980px; display: flex; gap: 14px; flex-wrap: wrap;
+    padding: 14px; border-radius: 28px; background: var(--hueso); color: var(--tinta);
+    box-shadow: 0 40px 80px -40px rgb(11 47 35 / .55);
+    animation: mega-in .5s var(--ease);
+  }
+  @keyframes mega-in { from { opacity: 0; transform: translateY(-8px); } }
+  .mega__card { flex: 1 1 220px; display: flex; flex-direction: column; gap: 12px; padding: 8px; border-radius: 20px; text-decoration: none; color: inherit; overflow: visible; }
+  .mega__card:hover { background: var(--arena); }
+  .mega__foto { position: relative; display: block; height: 150px; border-radius: 16px; overflow: hidden; }
+  .mega__info { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding: 0 6px 6px; }
+  .mega__tipo { display: block; font-size: .6875rem; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; color: var(--gris-texto); }
+  .mega__nombre { display: block; font-family: var(--font-display); font-size: 1.75rem; line-height: 1.05; }
+  .mega__ver { display: inline-flex; align-items: center; gap: 6px; font-size: .875rem; font-weight: 700; color: var(--pda-tierra); white-space: nowrap; }
+  .mega__comparar {
+    flex: 0 1 200px; display: flex; flex-direction: column; justify-content: space-between; gap: 16px;
+    padding: 22px; border-radius: 20px; background: var(--verde-900); color: var(--hueso);
+  }
+  .mega__comparar p { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.15; }
+  .mega__comparar em { color: var(--tierra-clara); }
+  .mega__comparar a { display: inline-flex; align-items: center; gap: 8px; color: var(--hueso); font-weight: 700; font-size: .875rem; text-decoration: none; }
+
+  /* Menú celular */
+  .mmenu {
+    position: fixed; inset: 0; z-index: 150; overflow-y: auto;
+    display: flex; flex-direction: column; padding: 16px 20px 120px;
+    background: var(--verde-900); color: var(--hueso);
+    clip-path: inset(0 0 100% 0); transition: clip-path .7s var(--ease);
+  }
+  .mmenu[hidden] { display: none; }
+  .mmenu.is-open { clip-path: inset(0); }
+  .mmenu__top { display: flex; justify-content: space-between; align-items: center; padding: 6px 0 6px 8px; }
+  .mmenu__logo { height: 42px; width: auto; }
+  .mmenu__cerrar { width: 48px; height: 48px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--hueso); color: var(--verde-900); }
+  .mmenu__links { margin-top: 32px; display: flex; flex-direction: column; gap: 2px; }
+  .mmenu__links a {
+    display: flex; align-items: baseline; gap: 14px; color: var(--hueso); text-decoration: none;
+    font-family: var(--font-display); font-size: clamp(2.25rem, 11vw, 3rem); line-height: 1.15;
+  }
+  .mmenu__links a span { font-family: var(--font-body); font-size: .75rem; font-weight: 700; color: var(--teal-claro); }
+  .mmenu__modelos { margin: 32px -20px 0; padding: 0 20px; display: flex; gap: 10px; overflow-x: auto; }
+  .mmenu__modelos a { display: block; width: 150px; color: var(--hueso); text-decoration: none; }
+  .mmenu__foto { position: relative; display: block; height: 110px; border-radius: 16px; overflow: hidden; }
+  .mmenu__nombre { display: block; margin-top: 8px; font-family: var(--font-display); font-size: 1.125rem; }
+  .mmenu__tipo { font-size: .6875rem; letter-spacing: .16em; font-weight: 700; text-transform: uppercase; color: rgb(250 247 241 / .72); }
+  .mmenu li { opacity: 0; transform: translateY(24px); transition: opacity .6s var(--ease), transform .6s var(--ease); transition-delay: calc(.15s + var(--i) * .06s); }
+  .mmenu.is-open li { opacity: 1; transform: none; }
+
+  @media (max-width: 1180px) {
+    .hdr__nav ul { gap: 22px; }
+    .hdr__sec { display: none; }
+  }
+  @media (max-width: 1023px) {
+    .hdr { top: 12px; left: 12px; right: 12px; }
+    .hdr__capsula { padding: 6px 6px 6px 18px; }
+    .hdr__nav, .hdr__ctas { display: none; }
+    .hdr__menu-btn { display: grid; }
+    .hdr__logo-img { height: 42px; }
+    .hdr.is-compacto .hdr__logo-img { height: 38px; }
+  }
+</style>

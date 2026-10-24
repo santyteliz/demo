@@ -1,0 +1,8 @@
+[
+  { "pregunta": "¿Desde cuánto cuestan las casas?", "respuesta": "Desde $88,997. El precio de cada modelo te lo confirma un asesor.", "confirmar": "Precios por modelo" },
+  { "pregunta": "¿Dónde queda Praderas de Arraiján?", "respuesta": "En Arraiján, Panamá Oeste, a 34 km de la Ciudad de Panamá, con la Línea 3 del Metro, escuelas y comercios cerca.", "confirmar": null },
+  { "pregunta": "¿Qué modelos hay?", "respuesta": "Tres: Roble y Cedro, unifamiliares de una planta, y Almendro Dúplex, de dos plantas y 3 recámaras.", "confirmar": null },
+  { "pregunta": "¿Cuánto necesito de abono?", "respuesta": "Depende del modelo y del banco. Usa la calculadora para estimar tu cuota y un asesor te confirma el abono mínimo.", "confirmar": "Abono mínimo" },
+  { "pregunta": "¿Qué necesito para precalificar?", "respuesta": "Te orientamos con los requisitos del banco durante tu visita.", "confirmar": "Lista de requisitos" },
+  { "pregunta": "¿Puedo ver la casa antes de comprar?", "respuesta": "Sí. Agenda tu visita y recorre la casa modelo y las amenidades. También puedes hacer el recorrido virtual 360 de Roble y Almendro Dúplex.", "confirmar": null }
+]

@@ -1,0 +1,45 @@
+---
+// Set de iconos propio: trazo 1.5, mismas proporciones en todo el sitio.
+const paths = {
+  recamaras: 'M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 15h18M7 9V6h10v3',
+  banos: 'M4 12h16v3a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4v-3zM6 12V6a2 2 0 0 1 4 0M7 19l-1 2M17 19l1 2',
+  m2: 'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',
+  estacionamiento: 'M5 16v-5l2-5h10l2 5v5M3 16h18v3H3zM7 13h1M16 13h1',
+  casa: 'M3 20h18M5 20V11l7-6 7 6v9M9 20v-5h6v5',
+  precio: 'M12 3v18M16.5 7.5C16 6 14.3 5 12 5 9.5 5 8 6.3 8 8c0 4 9 2.5 9 7 0 1.8-1.8 3-5 3-2.4 0-4.2-1-4.8-2.6',
+  ubicacion: 'M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21zM12 12a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',
+  agenda: 'M5.5 5h13a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zM3.5 10h17M8 3v4M16 3v4',
+  whatsapp: 'M4 20l1.3-3.9A8 8 0 1 1 8.2 19zM9.5 9.5c.3 2.4 2.6 4.7 5 5',
+  cuota: 'M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM8 7h8M8 11h2M12 11h1M15 11h1M8 15h2M12 15h1M15 15h1',
+  r360: 'M3 12a9 4 0 0 0 18 0M3 12a9 4 0 0 1 15-3M18 6v3h-3',
+  hoja: 'M5 19C5 10 11 5 20 4c-1 9-6 15-15 15zM5 19l8-8',
+  gazebo: 'M3 10l9-6 9 6M5 10v10M19 10v10M3 20h18M9 20v-5h6v5',
+  ejercicio: 'M13 4a1.5 1.5 0 1 0 0 .01M7 21l3-6 3 2v4M10 15l1-5 4 3h4M8 10l3-2',
+  yoga: 'M12 4a1.5 1.5 0 1 0 0 .01M4 20h16M12 8v6M6 11l6 3 6-3M8 20l4-6 4 6',
+  flecha: 'M5 12h14M13 6l6 6-6 6',
+  externo: 'M7 17L17 7M8 7h9v9',
+  chevron: 'M6 9l6 6 6-6',
+  mas: 'M12 5v14M5 12h14',
+  menos: 'M5 12h14',
+  cerrar: 'M6 6l12 12M18 6L6 18',
+  menu: 'M4 9h16M8 15h12',
+  play: 'M8 5v14l11-7z',
+  check: 'M5 12.5l4.5 4.5L19 7.5',
+  arriba: 'M12 19V5M6 11l6-6 6 6',
+} as const;
+
+export type IconName = keyof typeof paths;
+interface Props { name: IconName; size?: number; class?: string; label?: string; [key: `data-${string}`]: unknown; }
+// rest lleva el atributo de estilos con alcance del componente padre
+const { name, size = 22, class: cls = '', label, ...rest } = Astro.props;
+const fill = name === 'play';
+---
+<svg
+  class:list={['ico', cls]}
+  width={size} height={size} viewBox="0 0 24 24"
+  style={fill ? 'fill: currentColor; stroke: none' : undefined}
+  aria-hidden={label ? undefined : 'true'}
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  {...rest}
+><path d={paths[name]} /></svg>

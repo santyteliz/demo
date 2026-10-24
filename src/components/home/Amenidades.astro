@@ -1,0 +1,104 @@
+---
+import Foto from '../Foto.astro';
+import Icon from '../Icon.astro';
+import Confirmar from '../Confirmar.astro';
+import data from '../../data/amenidades.json';
+const nombres = data.recreativas.map((a) => a.nombre.replace('Área para ', '').replace('Área de ', '').replace('Zona de ', ''));
+const radios = ['28px', '28px 28px 28px 8px', '28px', '28px', '8px 28px 28px 28px', '28px', '28px', '28px', '28px'];
+---
+<section id="amenidades" class="sec sec--profunda amen on-dark" aria-labelledby="amen-t" data-amen>
+  <div class="wrap amen__head">
+    <h2 id="amen-t" class="amen__titulo">
+      <span class="amen__num"><span data-count="15" data-prefijo="+">+15</span></span>
+      <span class="amen__txt"><span class="overline">Amenidades</span><span class="display">para vivir <em>afuera.</em></span></span>
+    </h2>
+    <p class="lead">Parques, canchas y áreas verdes dentro del proyecto: el fin de semana empieza al salir de casa.</p>
+  </div>
+
+  <div class="amen__viewport" data-amen-viewport tabindex="0" aria-label="Amenidades, desliza horizontalmente">
+    <ul role="list" class="amen__track" data-amen-track>
+      {data.recreativas.map((a, i) => (
+        <li class="amen__card hover-zoom" style={`--w:${a.ancho}px; --h:${a.alto}px; --r:${radios[i]}`} data-cursor={a.foto ? 'Arrastrar' : undefined}>
+          {a.foto ? (
+            <>
+              <span class="amen__foto" data-amen-par><Foto src={a.foto} alt={a.alt ?? a.nombre} widths={[480, 768, 1080]} sizes="(min-width: 1024px) 520px, 80vw" class="cubre" /></span>
+              <span class="amen__velo" aria-hidden="true"></span>
+            </>
+          ) : (
+            <span class="amen__ico" aria-hidden="true"><Icon name={a.icono as 'gazebo'} size={28} /></span>
+          )}
+          <span class="amen__info">
+            <span class="amen__n">{String(i + 1).padStart(2, '0')}</span>
+            <span class="amen__nombre">{a.nombre}</span>
+            <span class="amen__desc">{a.desc}</span>
+          </span>
+          {a.fotoConfirmar && <span class="amen__conf"><Confirmar texto="Foto real" /></span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="marquee amen__marquee" aria-hidden="true">
+    <div class="marquee__track">
+      <span>{nombres.join(' · ')} ·</span>
+      <span>{nombres.join(' · ')} ·</span>
+    </div>
+  </div>
+
+  <div class="wrap amen__infra">
+    {data.infraestructura.map((x) => (
+      <div class="amen__infra-card">
+        <span class="amen__infra-foto"><Foto src={x.foto} alt={x.alt} widths={[240]} sizes="112px" class="cubre" /></span>
+        <p><span class="overline">Infraestructura</span><strong>{x.nombre}</strong><span>{x.desc}</span></p>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .amen { padding-bottom: 0; overflow: hidden; }
+  .amen__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap; }
+  .amen__head .lead { max-width: 22.5rem; }
+  .amen__titulo { display: flex; align-items: flex-end; gap: 24px; flex-wrap: wrap; font-weight: 400; }
+  .amen__num { font-family: var(--font-display); font-size: clamp(7.5rem, 15vw, 13.75rem); line-height: .78; letter-spacing: -.04em; color: var(--tierra-clara); }
+  .amen__txt { display: flex; flex-direction: column; gap: 10px; padding-bottom: 8px; }
+  .amen__txt .display { font-size: clamp(2.25rem, 3.6vw, 3.25rem); }
+
+  .amen__viewport { margin-top: 72px; overflow-x: auto; scrollbar-width: none; }
+  .amen__viewport::-webkit-scrollbar { display: none; }
+  .amen__track { display: flex; align-items: flex-end; gap: 20px; width: max-content; padding-inline: var(--gutter); }
+  .amen__card { position: relative; flex: none; width: var(--w); height: var(--h); border-radius: var(--r); background: var(--verde-900); }
+  .amen__card:nth-child(6n + 6), .amen__card:nth-child(9) { background: var(--verde-800); }
+  .amen__foto { position: absolute; inset: 0 -8%; }
+  .amen__velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 47 35 / 0) 45%, rgb(11 47 35 / .86) 100%); }
+  .amen__ico { position: absolute; top: 28px; left: 28px; width: 56px; height: 56px; border-radius: 16px; border: 1px solid rgb(250 247 241 / .3); color: var(--teal-claro); display: grid; place-items: center; }
+  .amen__info { position: absolute; left: 28px; right: 28px; bottom: 26px; display: flex; flex-direction: column; gap: 6px; }
+  .amen__n { font-size: .75rem; letter-spacing: .24em; font-weight: 700; color: var(--teal-claro); }
+  .amen__nombre { font-family: var(--font-display); font-size: 2.125rem; line-height: 1.02; }
+  .amen__desc { font-size: .875rem; line-height: 1.5; color: rgb(250 247 241 / .82); }
+  .amen__conf { position: absolute; top: 20px; right: 20px; }
+
+  .amen__marquee { margin-top: 72px; padding: 26px 0; border-block: 1px solid rgb(250 247 241 / .12); }
+  .amen__marquee span { font-family: var(--font-display); font-style: italic; font-size: clamp(2.25rem, 4vw, 3.25rem); line-height: 1; color: rgb(242 201 161 / .55); white-space: nowrap; }
+
+  .amen__infra { display: flex; justify-content: flex-end; padding-block: 56px clamp(5rem, 9vw, 7.5rem); }
+  .amen__infra-card { display: flex; align-items: center; gap: 20px; max-width: 32.5rem; padding: 12px 24px 12px 12px; border: 1px solid rgb(250 247 241 / .18); border-radius: 22px; }
+  .amen__infra-foto { position: relative; flex: none; width: 112px; height: 84px; border-radius: 14px; overflow: hidden; }
+  .amen__infra-card p { display: flex; flex-direction: column; gap: 4px; }
+  .amen__infra-card .overline { font-size: .6875rem; letter-spacing: .24em; }
+  .amen__infra-card strong { font-size: 1.0625rem; }
+  .amen__infra-card p > span:last-child { font-size: .875rem; color: rgb(250 247 241 / .75); }
+
+  /* Desktop: la sección se pinnea desde arriba, así que título + tarjetas entran en la pantalla */
+  @media (min-width: 1024px) {
+    .amen { padding-top: clamp(6.5rem, 12vh, 8.75rem); }
+    .amen__viewport { margin-top: clamp(2rem, 5vh, 4.5rem); }
+    .amen__card { height: max(260px, calc(var(--h) - max(0px, 1040px - 100svh))); }
+  }
+  @media (max-width: 1023px) {
+    .amen__viewport { margin-top: 40px; scroll-snap-type: x mandatory; }
+    .amen__card { width: min(78vw, 300px); height: 380px; scroll-snap-align: start; }
+    .amen__nombre { font-size: 1.75rem; }
+    .amen__infra { justify-content: flex-start; }
+  }
+</style>

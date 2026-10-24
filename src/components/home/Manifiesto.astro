@@ -1,0 +1,40 @@
+---
+import { Image } from 'astro:assets';
+import hoja from '../../assets/marca/praderas-hoja-naranja.png';
+---
+<section id="manifiesto" class="sec man" aria-labelledby="man-t">
+  <Image src={hoja} alt="" width={460} class="man__hoja" aria-hidden="true" data-parallax="0.15" />
+  <div class="wrap man__grid">
+    <div class="man__texto">
+      <h2 id="man-t" class="overline">Nuestro manifiesto</h2>
+      <p class="man__parrafo" data-iluminar>
+        En Praderas de Arraiján diseñamos espacios pensados en <em>comodidad, bienestar y estilo. </em>Áreas verdes para que los niños crezcan afuera, más de quince amenidades a pasos de tu puerta
+        y una casa con tu nombre en la puerta. Tu primera casa no es un trámite: es el lugar donde empieza todo.
+      </p>
+    </div>
+    <dl class="man__numeros">
+      <div><dt>recámaras por casa</dt><dd><span data-count="2">2</span><em> y </em><span data-count="3">3</span></dd></div>
+      <div><dt>amenidades</dt><dd>+<span data-count="15">15</span></dd></div>
+      <div><dt>de Ciudad de Panamá</dt><dd><span data-count="34">34</span><small> km</small></dd></div>
+      <div><dt>de construcción, desde</dt><dd><span data-count="70">70</span><small> m²</small></dd></div>
+    </dl>
+  </div>
+</section>
+
+<style>
+  .man { overflow: hidden; }
+  .man__hoja { position: absolute; right: -70px; top: 60px; width: 230px; height: auto; transform: rotate(18deg); }
+  .man__grid { display: flex; flex-wrap: wrap; gap: clamp(3rem, 6vw, 5rem); align-items: flex-start; }
+  .man__texto { flex: 999 1 560px; min-width: 0; }
+  .man__texto .overline { margin-bottom: 40px; }
+  .man__parrafo { font-family: var(--font-display); font-size: clamp(1.75rem, 3.3vw, 3rem); line-height: 1.22; letter-spacing: -.01em; }
+  .man__parrafo em { color: var(--pda-tierra); }
+  .man__numeros { flex: 1 1 340px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--linea); }
+  .man__numeros > div { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; padding: 28px 0; border-bottom: 1px solid var(--linea); }
+  .man__numeros > div:nth-child(odd) { padding-right: 20px; border-right: 1px solid var(--linea); }
+  .man__numeros > div:nth-child(even) { padding-left: 24px; }
+  .man__numeros dd { font-family: var(--font-display); font-size: clamp(3.25rem, 5vw, 4.75rem); line-height: 1; color: var(--verde-900); font-variant-numeric: tabular-nums; }
+  .man__numeros dd em { color: var(--pda-tierra); font-size: .58em; }
+  .man__numeros dd small { font-size: .4em; }
+  .man__numeros dt { font-size: .875rem; font-weight: 600; color: var(--gris-texto); }
+</style>

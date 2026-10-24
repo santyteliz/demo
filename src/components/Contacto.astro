@@ -1,0 +1,42 @@
+---
+// WhatsApp flotante en desktop; barra fija con "Agenda tu visita" + WhatsApp en celular.
+import Icon from './Icon.astro';
+import { whatsappUrl, mensajeWhatsapp } from '../lib/sitio';
+interface Props { modelo?: string; }
+const { modelo } = Astro.props;
+const wa = whatsappUrl(mensajeWhatsapp(modelo));
+---
+<a class="wa-flot" href={wa} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-track="whatsapp" data-whatsapp>
+  <Icon name="whatsapp" size={26} />
+</a>
+
+<div class="barra" data-barra>
+  <a class="btn btn--cta barra__cta" href="#agenda" data-track="agendar"><Icon name="agenda" size={20} />Agenda tu visita<span class="btn-fill"></span></a>
+  <a class="barra__wa" href={wa} target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" data-track="whatsapp" data-whatsapp><Icon name="whatsapp" size={24} /></a>
+</div>
+
+<style>
+  .wa-flot {
+    position: fixed; right: 24px; bottom: 24px; z-index: 90;
+    width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center;
+    background: var(--pda-verde); color: var(--hueso);
+    box-shadow: 0 18px 40px -18px rgb(11 47 35 / .8);
+    transition: transform .5s var(--ease);
+  }
+  .wa-flot:hover { transform: translateY(-3px) scale(1.04); color: var(--hueso); }
+  .barra { display: none; }
+  @media (max-width: 1023px) {
+    .wa-flot { display: none; }
+    .barra {
+      /* encima del menú a pantalla completa: la conversión queda siempre a mano */
+      position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 160;
+      display: flex; gap: 8px; padding: 8px; border-radius: 26px;
+      background: rgb(250 247 241 / .92); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+      box-shadow: 0 18px 40px -20px rgb(11 47 35 / .6);
+      transition: transform .6s var(--ease);
+    }
+    .barra.is-hidden { transform: translateY(calc(100% + 24px)); }
+    .barra__cta { flex: 1; --btn-h: 52px; border-radius: 22px 6px 22px 22px; font-size: 1rem; }
+    .barra__wa { flex: none; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--pda-verde); color: var(--hueso); }
+  }
+</style>

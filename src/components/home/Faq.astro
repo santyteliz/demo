@@ -1,0 +1,62 @@
+---
+import Icon from '../Icon.astro';
+import Confirmar from '../Confirmar.astro';
+import faq from '../../data/faq.json';
+import { whatsappUrl, mensajeWhatsapp } from '../../lib/sitio';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.filter((f) => !f.confirmar).map((f) => ({ '@type': 'Question', name: f.pregunta, acceptedAnswer: { '@type': 'Answer', text: f.respuesta } })),
+};
+---
+<section id="faq" class="sec faq" aria-labelledby="faq-t">
+  <div class="wrap faq__grid">
+    <div class="faq__intro">
+      <h2 id="faq-t" class="display h2" data-split>Preguntas<br /><em>frecuentes.</em></h2>
+      <p class="lead">¿Tienes otra duda? <a href={whatsappUrl(mensajeWhatsapp())} target="_blank" rel="noopener" data-track="whatsapp" data-whatsapp>Escríbenos por WhatsApp</a> y te responde un asesor.</p>
+    </div>
+    <div class="faq__lista" data-acordeon>
+      {faq.map((f, i) => (
+        <div class="faq__item">
+          <h3>
+            <button type="button" class="faq__btn" id={`faq-b-${i}`} aria-expanded={i === 0 ? 'true' : 'false'} aria-controls={`faq-p-${i}`} data-acordeon-btn>
+              <span>{f.pregunta}</span>
+              <span class="faq__ico" aria-hidden="true"><Icon name="mas" size={18} /></span>
+            </button>
+          </h3>
+          <div class="faq__panel" id={`faq-p-${i}`} role="region" aria-labelledby={`faq-b-${i}`} data-abierto={i === 0 ? 'true' : 'false'}>
+            <div><p>{f.respuesta} {f.confirmar && <Confirmar texto={f.confirmar} />}</p></div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+</section>
+
+<style>
+  .faq__grid { display: flex; flex-wrap: wrap; gap: clamp(2.5rem, 5vw, 4rem); }
+  .faq__intro { flex: 1 1 340px; min-width: 0; }
+  .faq__intro .lead { margin-top: 24px; max-width: 20rem; }
+  .faq__lista { flex: 2 1 560px; min-width: 0; border-top: 1px solid var(--linea); }
+  .faq__item { border-bottom: 1px solid var(--linea); }
+  .faq__btn {
+    width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 24px;
+    padding: 28px 0; background: none; border: 0; text-align: left;
+    font-family: var(--font-display); font-size: clamp(1.25rem, 2vw, 1.625rem); line-height: 1.2; color: var(--tinta);
+  }
+  .faq__ico {
+    flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--linea);
+    display: grid; place-items: center; color: var(--pda-verde);
+    transition: transform .5s var(--ease), background-color .4s var(--ease), color .4s var(--ease);
+  }
+  .faq__btn:hover .faq__ico { background: var(--verde-900); color: var(--hueso); border-color: var(--verde-900); }
+  .faq__btn[aria-expanded='true'] .faq__ico { transform: rotate(45deg); }
+  .faq__panel { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .6s var(--ease); }
+  .faq__panel[data-abierto='true'] { grid-template-rows: 1fr; }
+  .faq__panel > div { overflow: hidden; }
+  .faq__panel p { padding: 0 clamp(0px, 6vw, 80px) 28px 0; line-height: 1.7; color: var(--tinta-2); opacity: 0; transition: opacity .4s var(--ease); }
+  .faq__panel[data-abierto='true'] p { opacity: 1; transition-delay: .15s; }
+  .faq__panel[data-abierto='false'] { visibility: hidden; transition: grid-template-rows .6s var(--ease), visibility 0s .6s; }
+</style>

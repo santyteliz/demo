@@ -1,0 +1,6 @@
+---
+// Marcador visible para el cliente: dato pendiente de validar con Grupo Legacy.
+interface Props { texto?: string; }
+const { texto } = Astro.props;
+---
+<span class="confirmar" title="Dato pendiente de confirmar con Grupo Legacy">{texto ? `${texto} · ` : ''}[Confirmar]</span>

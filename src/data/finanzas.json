@@ -1,0 +1,12 @@
+{
+  "_nota": "VALORES MARCADOR [CONFIRMAR]. Nunca presentar la tasa como real hasta que Grupo Legacy la valide.",
+  "tasaAnual": 6.5,
+  "tasaEditable": true,
+  "plazosAnios": [15, 20, 25, 30],
+  "plazoPorDefecto": 30,
+  "abonoMinimoPct": 5,
+  "abonoMaximoPct": 30,
+  "abonoPorDefectoPct": 10,
+  "confirmar": true,
+  "legal": "Cálculo estimado y referencial. Sujeto a aprobación bancaria."
+}

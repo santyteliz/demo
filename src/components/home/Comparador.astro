@@ -1,0 +1,99 @@
+---
+import Foto from '../Foto.astro';
+import Confirmar from '../Confirmar.astro';
+import modelos from '../../data/modelos.json';
+
+type Celda = { valor: string; confirmar: boolean };
+const filas: { label: string; celdas: Celda[] }[] = [
+  { label: 'Tipo', celdas: modelos.map((m) => ({ valor: m.tipo.split(' · ')[0], confirmar: false })) },
+  { label: 'Plantas', celdas: modelos.map((m) => m.plantas) },
+  { label: 'Recámaras', celdas: modelos.map((m) => m.recamaras) },
+  { label: 'Baños', celdas: modelos.map((m) => m.banos) },
+  { label: 'Construcción', celdas: modelos.map((m) => ({ valor: m.m2.valor === '—' ? '— m²' : `${m.m2.valor} m²`, confirmar: m.m2.confirmar })) },
+  { label: 'Estacionamientos', celdas: modelos.map((m) => m.estacionamientos) },
+  { label: 'Precio desde', celdas: modelos.map((m) => ({ valor: m.precio.texto, confirmar: m.precio.confirmar })) },
+  { label: 'Recorrido 360', celdas: modelos.map((m) => ({ valor: m.recorrido360 ? 'Sí' : 'No disponible', confirmar: false })) },
+];
+---
+<section id="comparador" class="sec comp" aria-labelledby="comp-t" data-comp>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="comp-t" class="display h2" data-split>Compara los modelos<br /><em>lado a lado.</em></h2>
+      <p class="lead">Pasa el cursor por cualquier fila para ver el detalle de cada casa. Los datos marcados los valida Grupo Legacy.</p>
+    </div>
+
+    <div class="comp__sel" role="group" aria-label="Elige dos modelos para comparar">
+      <label>Modelo A
+        <select data-comp-sel="0">{modelos.map((m, i) => <option value={i} selected={i === 0}>{m.nombre}</option>)}</select>
+      </label>
+      <label>Modelo B
+        <select data-comp-sel="1">{modelos.map((m, i) => <option value={i} selected={i === 2}>{m.nombre}</option>)}</select>
+      </label>
+    </div>
+
+    <div class="comp__caja" tabindex="0" aria-label="Tabla comparativa, desliza si no ves todas las columnas">
+      <table class="comp__tabla" data-comp-tabla>
+        <caption class="sr-only">Comparación de los modelos Roble, Cedro y Almendro Dúplex</caption>
+        <thead>
+          <tr>
+            <td></td>
+            {modelos.map((m, i) => (
+              <th scope="col" data-col={i}>
+                <span class="comp__foto"><Foto src={m.fotoPrincipal} alt="" widths={[360, 540]} sizes="(min-width: 1024px) 300px, 45vw" class="cubre" /></span>
+                <span class="comp__tipo">{m.tipoCorto}</span>
+                <span class="comp__nombre">{m.nombre}</span>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {filas.map((f) => (
+            <tr>
+              <th scope="row">{f.label}</th>
+              {f.celdas.map((c, i) => <td data-col={i}>{c.valor} {c.confirmar && <Confirmar />}</td>)}
+            </tr>
+          ))}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td></td>
+            {modelos.map((m, i) => (
+              <td data-col={i}><a class="btn btn--borde btn--sm comp__btn" href="#agenda" data-agenda-modelo={m.slug} data-track="agendar">Agendar visita para este modelo<span class="btn-fill"></span></a></td>
+            ))}
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  .comp__sel { display: none; }
+  .comp__caja { overflow-x: auto; border-radius: 28px; border: 1px solid var(--linea); background: var(--hueso); }
+  .comp__tabla { width: 100%; min-width: 820px; border-collapse: collapse; text-align: left; }
+  .comp__tabla th, .comp__tabla td { padding: 18px 20px; transition: background-color .35s var(--ease); }
+  .comp__tabla tbody tr, .comp__tabla tfoot tr { border-top: 1px solid var(--linea-suave); }
+  .comp__tabla tbody th { padding-left: 28px; font-size: .875rem; font-weight: 600; color: var(--gris-texto); width: 20%; }
+  .comp__tabla tbody td { font-weight: 600; }
+  .comp__tabla thead th { vertical-align: top; padding-top: 20px; }
+  .comp__tabla tbody tr:hover > * { background: #F3EDE3; }
+  .comp__tabla .is-col { background: var(--teal-suave) !important; }
+  .comp__foto { position: relative; display: block; height: 132px; border-radius: 16px; overflow: hidden; margin-bottom: 14px; }
+  .comp__tipo { display: block; font-size: .6875rem; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; color: var(--gris-texto); }
+  .comp__nombre { display: block; font-family: var(--font-display); font-weight: 400; font-size: 1.875rem; line-height: 1.05; }
+  .comp__btn { width: 100%; padding: 0 14px; font-size: .875rem; }
+
+  /* Celular: 2 modelos a la vez */
+  @media (max-width: 767px) {
+    .comp__sel { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; }
+    .comp__sel label { display: flex; flex-direction: column; gap: 6px; font-size: .75rem; font-weight: 700; color: var(--gris-texto); letter-spacing: .12em; text-transform: uppercase; }
+    .comp__sel select { min-height: 48px; padding: 0 12px; border: 1px solid var(--linea); border-radius: var(--r-input); background: var(--hueso); font-weight: 600; font-size: .9375rem; letter-spacing: 0; text-transform: none; color: var(--tinta); }
+    .comp__tabla { min-width: 0; table-layout: fixed; }
+    .comp__tabla .is-oculta { display: none; }
+    .comp__tabla th, .comp__tabla td { padding: 12px 10px; font-size: .875rem; }
+    .comp__tabla tbody th { padding-left: 14px; width: 30%; }
+    .comp__foto { height: 84px; }
+    .comp__nombre { font-size: 1.25rem; }
+    .comp__btn { --btn-h: 44px; font-size: .75rem; padding: 0 8px; }
+  }
+</style>

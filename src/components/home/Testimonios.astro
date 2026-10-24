@@ -1,0 +1,71 @@
+---
+import Foto from '../Foto.astro';
+import Icon from '../Icon.astro';
+import Confirmar from '../Confirmar.astro';
+import sitio from '../../data/sitio.json';
+---
+<section id="historias" class="sec sec--arena hist" aria-labelledby="hist-t">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2 id="hist-t" class="hist__titulo"><span class="overline">Mi historia en</span><span class="hist__grande" data-split>Praderas</span></h2>
+      <p class="lead">Familias que ya viven aquí te cuentan cómo fue comprar su primera casa. Solo historias reales.</p>
+    </div>
+    <ul role="list" class="hist__lista">
+      {sitio.testimonios.map((t, i) => (
+        <li class="hist__item" style={`--off:${i % 2 ? 48 : 0}px`} data-fade>
+          {t.youtubeId ? (
+            <button type="button" class="hist__card hover-zoom" data-video={t.youtubeId} data-video-titulo={t.titulo} aria-label={`Ver video: ${t.titulo}`}>
+              <Foto src={t.foto} alt="" widths={[360, 540]} sizes="(min-width: 1024px) 300px, 80vw" class="cubre" />
+              <span class="hist__velo" aria-hidden="true"></span>
+              <span class="hist__play" aria-hidden="true"><Icon name="play" size={20} /></span>
+              <span class="hist__txt"><span class="hist__t">{t.titulo}</span><span class="hist__m">{t.meta}</span></span>
+            </button>
+          ) : (
+            <div class="hist__card hist__card--pendiente">
+              <Foto src={t.foto} alt="" widths={[360, 540]} sizes="(min-width: 1024px) 300px, 80vw" class="cubre" />
+              <span class="hist__velo" aria-hidden="true"></span>
+              <span class="hist__conf"><Confirmar texto="Link del video" /></span>
+              <span class="hist__txt"><span class="hist__t">{t.titulo}</span><span class="hist__m">{t.meta}</span></span>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog class="video" data-video-modal aria-label="Video">
+    <div class="video__marco" data-video-marco></div>
+    <button type="button" class="video__cerrar" data-video-cerrar><span class="sr-only">Cerrar video</span><Icon name="cerrar" size={20} /></button>
+  </dialog>
+</section>
+
+<style>
+  .hist { overflow: hidden; }
+  .hist__titulo { display: flex; flex-direction: column; gap: 12px; font-weight: 400; }
+  .hist__grande { font-family: var(--font-display); font-style: italic; font-size: clamp(4.5rem, 9vw, 8.75rem); line-height: .85; letter-spacing: -.03em; color: var(--pda-tierra); }
+  .hist__lista { display: flex; gap: 20px; flex-wrap: wrap; }
+  .hist__item { flex: 1 1 240px; margin-top: var(--off); }
+  .hist__card {
+    position: relative; display: block; width: 100%; aspect-ratio: 9 / 15; padding: 0; border: 0;
+    border-radius: 26px; overflow: hidden; color: var(--hueso); text-align: left; background: var(--verde-900);
+  }
+  .hist__velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 47 35 / .1) 30%, rgb(11 47 35 / .86) 100%); }
+  .hist__card--pendiente .hist__velo { background: linear-gradient(180deg, rgb(11 47 35 / .4) 0%, rgb(11 47 35 / .9) 100%); }
+  .hist__play { position: absolute; top: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: var(--hueso); color: var(--verde-900); display: grid; place-items: center; transition: transform .5s var(--ease); }
+  .hist__card:hover .hist__play { transform: scale(1.1); }
+  .hist__conf { position: absolute; top: 22px; left: 20px; }
+  .hist__txt { position: absolute; left: 22px; right: 22px; bottom: 22px; display: flex; flex-direction: column; gap: 6px; }
+  .hist__t { font-family: var(--font-display); font-size: 1.625rem; line-height: 1.1; }
+  .hist__m { font-size: .8125rem; color: rgb(250 247 241 / .85); }
+
+  .video { width: min(92vw, 1100px); padding: 0; border: 0; border-radius: 24px; background: #000; overflow: visible; }
+  .video::backdrop { background: rgb(11 47 35 / .92); }
+  .video__marco { aspect-ratio: 16 / 9; border-radius: 24px; overflow: hidden; }
+  .video__marco :global(iframe) { width: 100%; height: 100%; border: 0; display: block; }
+  .video__cerrar { position: absolute; top: -64px; right: 0; width: 52px; height: 52px; border-radius: 50%; border: 0; display: grid; place-items: center; background: var(--hueso); color: var(--verde-900); }
+
+  @media (max-width: 767px) {
+    .hist__lista { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x mandatory; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scrollbar-width: none; }
+    .hist__item { flex: none; width: 68vw; margin-top: 0; scroll-snap-align: start; }
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import Icon from '../Icon.astro';
+import Confirmar from '../Confirmar.astro';
+import puntos from '../../data/puntos.json';
+import sitio from '../../data/sitio.json';
+---
+<section id="ubicacion" class="sec ubi" aria-labelledby="ubi-t" data-tabs>
+  <div class="wrap ubi__grid">
+    <div class="ubi__texto">
+      <p class="overline">Ubicación</p>
+      <h2 id="ubi-t" class="display h2" data-split>A 34 km de la ciudad,<br /><em>cerca de todo.</em></h2>
+      <p class="lead">En Arraiján, Panamá Oeste, con la Línea 3 del Metro, escuelas y comercios en tu ruta diaria.</p>
+
+      <div class="chips ubi__tabs" role="tablist" aria-label="Puntos de interés por categoría">
+        {puntos.map((c, i) => (
+          <button type="button" class="chip" role="tab" id={`ubi-tab-${i}`} aria-controls={`ubi-panel-${i}`} aria-selected={i === 0 ? 'true' : 'false'} tabindex={i === 0 ? 0 : -1} data-tab={i}>{c.categoria}</button>
+        ))}
+      </div>
+      {puntos.map((c, i) => (
+        <div role="tabpanel" id={`ubi-panel-${i}`} aria-labelledby={`ubi-tab-${i}`} hidden={i !== 0} data-panel={i}>
+          <ul class="ubi__lista">
+            {c.puntos.map((p) => (
+              <li>
+                <span class="ubi__punto"><Icon name="ubicacion" size={20} />{p.nombre}</span>
+                {p.distancia ? <span class="ubi__dist">{p.distancia}</span> : <Confirmar texto="Nombre y distancia" />}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <a class="btn btn--verde ubi__btn" href={sitio.mapa.comoLlegar} target="_blank" rel="noopener" data-magnetic>Cómo llegar <Icon name="externo" size={18} /><span class="btn-fill"></span></a>
+    </div>
+
+    <figure class="ubi__mapa" data-mapa data-src={sitio.mapa.embed}>
+      <button type="button" class="ubi__mapa-portada" data-mapa-cargar>
+        <svg viewBox="0 0 700 620" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <rect width="700" height="620" fill="#E9E0CF" />
+          <path d="M0 470 C140 430 220 520 360 480 S560 380 700 420 L700 620 L0 620Z" fill="#D5E6D6" />
+          <path d="M-20 120 C120 160 260 80 400 130 S620 220 720 170" fill="none" stroke="#FAF7F1" stroke-width="16" stroke-linecap="round" />
+          <path d="M180 -20 C200 140 160 260 260 360 S330 560 300 660" fill="none" stroke="#FAF7F1" stroke-width="10" stroke-linecap="round" />
+          <path d="M480 -20 C470 120 520 220 470 320 S420 520 520 660" fill="none" stroke="#FAF7F1" stroke-width="7" stroke-linecap="round" />
+          <path d="M40 60 L660 210" fill="none" stroke="#03AE89" stroke-width="4" stroke-dasharray="2 9" stroke-linecap="round" />
+          <g fill="#B8D3BC"><circle cx="90" cy="420" r="38" /><circle cx="620" cy="520" r="54" /><circle cx="560" cy="60" r="30" /></g>
+          <g transform="translate(330 360)"><circle r="64" fill="#03AE89" opacity=".14" /><circle r="34" fill="#03AE89" opacity=".22" /><path d="M0 18 C-4 8 -20 -2 -20 -18 A20 20 0 0 1 20 -18 C20 -2 4 8 0 18Z" fill="#6B3626" /><circle cy="-18" r="7" fill="#FAF7F1" /></g>
+        </svg>
+        <span class="ubi__mapa-cta">Ver mapa interactivo</span>
+      </button>
+      <figcaption class="ubi__mapa-pie">
+        <span class="ubi__mapa-nombre"><strong>{sitio.nombre}</strong><span>{sitio.ubicacion}</span></span>
+        {sitio.mapa.embedConfirmar && <Confirmar texto="Ubicación exacta del pin" />}
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<style>
+  .ubi__grid { display: flex; flex-wrap: wrap; gap: clamp(2.5rem, 5vw, 3.5rem); }
+  .ubi__texto { flex: 1 1 420px; min-width: 0; }
+  .ubi__texto .overline { margin-bottom: 20px; }
+  .ubi__texto .lead { margin-top: 24px; max-width: 27.5rem; }
+  .ubi__tabs { margin-top: 40px; }
+  .ubi__tabs .chip { min-height: 44px; padding: 0 18px; font-size: .875rem; }
+  .ubi__lista { margin-top: 28px; padding: 0; list-style: none; border-top: 1px solid var(--linea); }
+  .ubi__lista li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--linea); }
+  .ubi__punto { display: flex; align-items: center; gap: 14px; font-weight: 600; }
+  .ubi__punto :global(svg) { color: var(--pda-verde); }
+  .ubi__dist { font-weight: 700; color: var(--gris-texto); }
+  .ubi__btn { margin-top: 32px; }
+
+  .ubi__mapa { flex: 1.3 1 520px; min-width: 0; position: relative; min-height: 620px; border-radius: var(--r-foto); overflow: hidden; background: var(--arena-2); }
+  .ubi__mapa-portada { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; background: none; }
+  .ubi__mapa-portada svg { width: 100%; height: 100%; }
+  .ubi__mapa-cta { position: absolute; top: 24px; right: 24px; padding: 12px 18px; border-radius: var(--r-pill); background: var(--verde-900); color: var(--hueso); font-weight: 700; font-size: .875rem; }
+  .ubi__mapa :global(iframe) { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; filter: sepia(.35) hue-rotate(40deg) saturate(.7) brightness(1.02); }
+  .ubi__mapa-pie { position: absolute; left: 24px; right: 24px; bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; pointer-events: none; }
+  .ubi__mapa-nombre { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; border-radius: 18px; background: var(--hueso); }
+  .ubi__mapa-nombre strong { font-family: var(--font-display); font-weight: 400; font-size: 1.375rem; }
+  .ubi__mapa-nombre span { font-size: .8125rem; color: var(--gris-texto); }
+  @media (max-width: 767px) { .ubi__mapa { min-height: 440px; } }
+</style>

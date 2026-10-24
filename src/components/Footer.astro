@@ -1,0 +1,78 @@
+---
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import logoOscuro from '../assets/marca/praderas-logo-para-fondo-oscuro.png';
+import logoLegacy from '../assets/marca/grupo-legacy-logo.png';
+import hoja from '../assets/marca/praderas-hoja-naranja.png';
+import sitio from '../data/sitio.json';
+import { whatsappUrl, mensajeWhatsapp } from '../lib/sitio';
+const c = sitio.contacto;
+const anio = new Date().getFullYear();
+---
+<footer class="ft sec--profunda on-dark">
+  <Image src={hoja} alt="" width={240} class="ft__hoja" aria-hidden="true" data-parallax="-0.12" />
+  <div class="wrap">
+    <p class="ft__frase display" data-split>Tu nuevo estilo de vida <em>empieza con una visita.</em></p>
+    <div class="ft__ctas">
+      <a class="btn btn--lg btn--cta" href="#agenda" data-magnetic data-track="agendar">Agenda tu visita<span class="btn-fill"></span></a>
+      <a class="btn btn--lg btn--claro" href={whatsappUrl(mensajeWhatsapp())} target="_blank" rel="noopener" data-track="whatsapp" data-whatsapp><Icon name="whatsapp" />Escríbenos por WhatsApp<span class="btn-fill"></span></a>
+    </div>
+
+    <div class="ft__grid">
+      <div class="ft__marca">
+        <Image src={logoOscuro} alt="Praderas de Arraiján" width={300} class="ft__logo" />
+        <p>Casas en Arraiján, Panamá Oeste. Desde {sitio.precioDesde}.</p>
+      </div>
+      <nav aria-label="Pie de página" class="ft__col">
+        <p class="overline">Explora</p>
+        <a class="ulink" href="/#modelos">Modelos</a>
+        <a class="ulink" href="#cuota">Calcula tu cuota</a>
+        <a class="ulink" href="/#comparador">Compara</a>
+        <a class="ulink" href="/#amenidades">Amenidades</a>
+        <a class="ulink" href="/#ubicacion">Ubicación</a>
+        <a class="ulink" href="/#faq">Preguntas frecuentes</a>
+      </nav>
+      <address class="ft__col">
+        <p class="overline">Contacto</p>
+        <span>{c.direccion}</span>
+        <a class="ulink" href={`tel:${c.telefono.tel}`}>Tel. {c.telefono.texto}</a>
+        <span>Cel. {c.celulares.map((cel, i) => <>{i > 0 && ' · '}<a class="ulink" href={`tel:${cel.tel}`}>{cel.texto}</a></>)}</span>
+        {c.correos.map((m) => <a class="ulink" href={`mailto:${m}`}>{m}</a>)}
+      </address>
+      <div class="ft__col">
+        <p class="overline">Síguenos</p>
+        {sitio.redes.map((r) => <a class="ulink" href={r.url} target="_blank" rel="noopener">{r.nombre}</a>)}
+        <p class="overline ft__legacy-t">Un proyecto de</p>
+        <span class="ft__legacy"><Image src={logoLegacy} alt="Grupo Legacy Inmobiliaria" height={40} /></span>
+      </div>
+    </div>
+
+    <div class="ft__legal">
+      <span>© {anio} {sitio.desarrollador} · <a href="/privacidad" id="privacidad">Aviso de privacidad</a></span>
+      <span>Diseño y desarrollo: Web Wisse</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ft { position: relative; overflow: hidden; padding: clamp(5rem, 10vw, 7.5rem) 0 40px; }
+  .ft__hoja { position: absolute; right: 6%; top: 80px; width: 120px; height: auto; transform: rotate(-12deg); }
+  .ft__frase { max-width: 68rem; font-size: clamp(3rem, 7vw, 6.75rem); line-height: .98; letter-spacing: -.025em; }
+  .ft__ctas { margin-top: 48px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .ft__grid {
+    margin-top: clamp(4rem, 8vw, 6.25rem); padding-top: 56px; border-top: 1px solid rgb(250 247 241 / .14);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;
+  }
+  .ft__marca { display: flex; flex-direction: column; gap: 20px; }
+  .ft__marca p { font-size: .875rem; color: rgb(250 247 241 / .72); }
+  .ft__logo { width: 150px; height: auto; }
+  .ft__col { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; font-style: normal; font-size: .9375rem; line-height: 1.55; color: rgb(250 247 241 / .88); }
+  .ft__col .overline { margin-bottom: 6px; font-size: .75rem; letter-spacing: .24em; }
+  .ft__col a { color: var(--hueso); }
+  .ft__legacy-t { margin-top: 16px; }
+  .ft__legacy { background: var(--hueso); border-radius: 14px; padding: 10px 16px; line-height: 0; }
+  .ft__legacy img { height: 40px; width: auto; }
+  .ft__legal { margin-top: 72px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: .8125rem; color: rgb(250 247 241 / .62); }
+  .ft__legal a { color: rgb(250 247 241 / .82); }
+  @media (max-width: 1023px) { .ft { padding-bottom: 120px; } }
+</style>

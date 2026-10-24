@@ -1,0 +1,178 @@
+---
+import Foto from './Foto.astro';
+import Icon from './Icon.astro';
+import Confirmar from './Confirmar.astro';
+import modelos from '../data/modelos.json';
+import sitio from '../data/sitio.json';
+import { whatsappUrl, mensajeWhatsapp } from '../lib/sitio';
+
+interface Props { modelo?: string; foto?: string; }
+const { modelo, foto = 'proyecto/interior-sala-home.jpg' } = Astro.props;
+const nombreModelo = modelos.find((m) => m.slug === modelo)?.nombre;
+const ag = sitio.agenda;
+---
+<section id="agenda" class="agenda" aria-labelledby="agenda-t">
+  <div class="agenda__marco">
+    <div class="agenda__foto on-dark">
+      <Foto src={foto} alt="Sala de una casa modelo de Praderas de Arraiján" sizes="(min-width: 1024px) 50vw, 100vw" class="cubre" data-parallax-img />
+      <span class="agenda__velo" aria-hidden="true"></span>
+      <div class="agenda__foto-txt">
+        <h2 id="agenda-t" class="display h2" data-split>Agenda tu visita.<br /><em>{nombreModelo ? `Ven a conocer ${nombreModelo}.` : 'Ven a conocer tu casa.'}</em></h2>
+        <ul role="list" class="agenda__beneficios">
+          <li><Icon name="casa" size={20} />Recorre la casa modelo por dentro</li>
+          <li><Icon name="hoja" size={20} />Camina por las amenidades</li>
+          <li><Icon name="whatsapp" size={20} />Resuelve tus dudas con un asesor</li>
+          <li><Icon name="cuota" size={20} />Sal con tu cuota estimada</li>
+        </ul>
+      </div>
+    </div>
+
+    <form class="agenda__form" data-lead-form novalidate aria-labelledby="agenda-t">
+      <div class="agenda__pasos" data-form-cuerpo>
+        <fieldset>
+          <legend class="agenda__leg">1 · Elige el día</legend>
+          <div class="agenda__dias" data-agenda-dias data-dias={ag.diasAdelante} data-excluir={JSON.stringify(ag.diasExcluidos)} role="group" aria-label="Días disponibles">
+            <noscript><label class="field"><input type="date" name="fecha" /><span>Fecha</span></label></noscript>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend class="agenda__leg">2 · Elige la hora {ag.confirmar && <Confirmar texto="Horario" />}</legend>
+          <div class="chips" role="group" aria-label="Horas disponibles">
+            {ag.horas.map((h, i) => <button type="button" class="chip agenda__hora" aria-pressed={i === 1 ? 'true' : 'false'} data-agenda-hora={h}>{h}</button>)}
+          </div>
+        </fieldset>
+
+        <p class="agenda__leg">3 · Tus datos</p>
+        <div class="agenda__campos">
+          <div class="agenda__full">
+            <div class="field"><input id={`f-nombre-${modelo ?? 'home'}`} name="nombre" type="text" autocomplete="name" placeholder=" " required minlength="3" data-validar="nombre" /><label for={`f-nombre-${modelo ?? 'home'}`}>Nombre y apellido</label></div>
+            <span class="field-msg" aria-live="polite"></span>
+          </div>
+          <div>
+            <div class="field field--prefix"><input id={`f-tel-${modelo ?? 'home'}`} name="telefono" type="tel" inputmode="tel" autocomplete="tel-national" placeholder=" " required data-validar="telefono" /><label for={`f-tel-${modelo ?? 'home'}`}>Teléfono</label><span class="prefix" aria-hidden="true">+507</span></div>
+            <span class="field-msg" aria-live="polite"></span>
+          </div>
+          <div>
+            <div class="field"><input id={`f-correo-${modelo ?? 'home'}`} name="correo" type="email" autocomplete="email" placeholder=" " required data-validar="correo" /><label for={`f-correo-${modelo ?? 'home'}`}>Correo</label></div>
+            <span class="field-msg" aria-live="polite"></span>
+          </div>
+          <div>
+            <div class="field">
+              <select id={`f-modelo-${modelo ?? 'home'}`} name="modelo" data-form-modelo>
+                {modelos.map((m) => <option value={m.nombre} selected={m.slug === modelo}>{m.nombre}</option>)}
+                <option value="Aún no sé" selected={!modelo}>Aún no sé</option>
+              </select>
+              <label for={`f-modelo-${modelo ?? 'home'}`}>Modelo de interés</label>
+            </div>
+          </div>
+          <div>
+            <div class="field">
+              <select id={`f-motivo-${modelo ?? 'home'}`} name="motivo">
+                {sitio.motivos.map((m) => <option value={m}>{m}</option>)}
+              </select>
+              <label for={`f-motivo-${modelo ?? 'home'}`}>Motivo</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos ocultos de origen para Zoho CRM -->
+        <input type="hidden" name="fecha_visita" data-hidden="fecha" />
+        <input type="hidden" name="hora_visita" data-hidden="hora" />
+        <input type="hidden" name="pagina" data-hidden="pagina" />
+        <input type="hidden" name="modelo_pagina" value={nombreModelo ?? ''} />
+        <input type="hidden" name="utm_source" data-hidden="utm_source" />
+        <input type="hidden" name="utm_medium" data-hidden="utm_medium" />
+        <input type="hidden" name="utm_campaign" data-hidden="utm_campaign" />
+        <input type="hidden" name="utm_term" data-hidden="utm_term" />
+        <input type="hidden" name="utm_content" data-hidden="utm_content" />
+        <input type="hidden" name="calculo" data-hidden="calculo" />
+
+        <div>
+          <label class="agenda__check">
+            <input type="checkbox" name="privacidad" required data-validar="privacidad" />
+            <span class="agenda__box" aria-hidden="true"><Icon name="check" size={14} /></span>
+            <span>Acepto el <a href="/privacidad">aviso de privacidad</a> y que Grupo Legacy me contacte sobre mi visita.</span>
+          </label>
+          <span class="field-msg" aria-live="polite"></span>
+        </div>
+
+        <p class="agenda__calc" data-form-calculo hidden></p>
+
+        <button type="submit" class="btn btn--lg btn--cta agenda__enviar" data-magnetic>
+          <span data-enviar-txt>Confirmar visita</span><span class="btn-fill"></span>
+        </button>
+        <p class="agenda__alt">¿Prefieres escribirnos? <a href={whatsappUrl(mensajeWhatsapp(nombreModelo))} target="_blank" rel="noopener" data-track="whatsapp" data-whatsapp>Abre WhatsApp</a></p>
+        <p class="agenda__error" data-form-error role="alert" hidden>No pudimos enviar tus datos. Intenta de nuevo o escríbenos por WhatsApp.</p>
+      </div>
+
+      <div class="agenda__exito" data-form-exito hidden tabindex="-1">
+        <svg class="agenda__check-anim" viewBox="0 0 80 80" aria-hidden="true"><circle cx="40" cy="40" r="36" pathLength="1" /><path d="M24 41l11 11 21-23" pathLength="1" /></svg>
+        <h3 class="display">¡Listo! <em>Te esperamos.</em></h3>
+        <p data-exito-txt>Un asesor te va a escribir para confirmar tu visita.</p>
+      </div>
+    </form>
+  </div>
+</section>
+
+<style>
+  .agenda { padding: 0 16px 16px; }
+  .agenda__marco { max-width: 88rem; margin-inline: auto; display: flex; flex-wrap: wrap; gap: 16px; padding: 16px; border-radius: 40px; background: var(--arena); }
+  .agenda__foto { position: relative; flex: 1 1 480px; min-width: 0; min-height: 760px; border-radius: 28px; overflow: hidden; color: var(--hueso); }
+  .agenda__velo { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 47 35 / .15) 20%, rgb(11 47 35 / .9) 100%); }
+  .agenda__foto-txt { position: absolute; left: clamp(1.5rem, 3vw, 2.75rem); right: clamp(1.5rem, 3vw, 2.75rem); bottom: clamp(1.5rem, 3vw, 2.75rem); display: flex; flex-direction: column; gap: 28px; }
+  .agenda__foto-txt .display { font-size: clamp(2.5rem, 4vw, 3.75rem); }
+  .agenda__beneficios { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px 24px; font-size: .9375rem; line-height: 1.45; }
+  .agenda__beneficios li { display: flex; gap: 10px; }
+  .agenda__beneficios :global(svg) { flex: none; color: var(--teal-claro); }
+
+  .agenda__form { flex: 1 1 520px; min-width: 0; position: relative; padding: clamp(1.5rem, 3.5vw, 2.75rem); border-radius: 28px; background: var(--hueso); }
+  .agenda__pasos { display: flex; flex-direction: column; gap: 22px; }
+  .agenda__pasos fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .agenda__leg { margin-bottom: 14px; font-size: .75rem; letter-spacing: .24em; font-weight: 700; text-transform: uppercase; color: var(--pda-verde); }
+  p.agenda__leg { margin: 6px 0 0; }
+  .agenda__dias { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; min-height: 64px; }
+  .agenda__dias :global(.dia) {
+    min-height: 64px; border-radius: 16px; border: 1px solid var(--linea); background: transparent; color: var(--tinta);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 6px 2px;
+    transition: background .35s var(--ease), color .35s var(--ease), border-color .35s var(--ease);
+  }
+  .agenda__dias :global(.dia:hover) { border-color: var(--verde-900); }
+  .agenda__dias :global(.dia[aria-pressed='true']) { background: var(--verde-900); border-color: var(--verde-900); color: var(--hueso); }
+  .agenda__dias :global(.dia b) { font-size: 1.25rem; line-height: 1.1; }
+  .agenda__dias :global(.dia small) { font-size: .6875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .agenda__hora[aria-pressed='true'] { background: var(--teal-suave); border-color: var(--pda-teal); color: var(--verde-900); }
+  .agenda__campos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px; }
+  .agenda__full { grid-column: 1 / -1; }
+
+  .agenda__check { position: relative; display: flex; align-items: flex-start; gap: 12px; font-size: .875rem; line-height: 1.5; color: var(--tinta-2); cursor: pointer; }
+  .agenda__check input { position: absolute; opacity: 0; width: 22px; height: 22px; margin: 0; }
+  .agenda__box { flex: none; width: 22px; height: 22px; border-radius: 6px; border: 1px solid var(--gris-texto); display: grid; place-items: center; color: var(--hueso); transition: background .3s var(--ease), border-color .3s var(--ease); }
+  .agenda__box :global(svg) { stroke-width: 2.4; opacity: 0; transform: scale(.4); transition: opacity .3s var(--ease), transform .4s var(--ease); }
+  .agenda__check input:checked + .agenda__box { background: var(--pda-verde); border-color: var(--pda-verde); }
+  .agenda__check input:checked + .agenda__box :global(svg) { opacity: 1; transform: none; }
+  .agenda__check input:focus-visible + .agenda__box { outline: 2px solid var(--pda-teal); outline-offset: 3px; }
+
+  .agenda__calc { padding: 12px 16px; border-radius: 14px; background: var(--teal-suave); color: var(--verde-900); font-size: .875rem; font-weight: 600; }
+  .agenda__enviar { width: 100%; margin-top: 4px; }
+  .agenda__enviar[disabled] { opacity: .7; pointer-events: none; }
+  .agenda__alt { text-align: center; font-size: .875rem; color: var(--gris-texto); }
+  .agenda__alt a { font-weight: 700; }
+  .agenda__error { padding: 12px 16px; border-radius: 14px; background: var(--confirmar-bg); color: var(--confirmar-fg); font-weight: 600; font-size: .875rem; }
+
+  .agenda__exito { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 32px; text-align: center; border-radius: 28px; background: var(--hueso); }
+  .agenda__exito[hidden] { display: none; }
+  .agenda__exito .display { font-size: clamp(2.25rem, 4vw, 3.25rem); }
+  .agenda__exito p { max-width: 24rem; color: var(--tinta-2); }
+  .agenda__check-anim { width: 96px; height: 96px; fill: none; stroke: var(--pda-teal); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .agenda__check-anim circle, .agenda__check-anim path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: dibujar .8s var(--ease) forwards; }
+  .agenda__check-anim path { animation-delay: .45s; stroke-width: 4; }
+  @keyframes dibujar { to { stroke-dashoffset: 0; } }
+
+  @media (max-width: 767px) {
+    .agenda { padding: 0 8px 8px; }
+    .agenda__marco { padding: 8px; border-radius: 30px; }
+    .agenda__foto { min-height: 460px; }
+    .agenda__dias { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .agenda__campos { grid-template-columns: 1fr; }
+  }
+</style>

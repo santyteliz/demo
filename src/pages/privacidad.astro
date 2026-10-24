@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import Confirmar from '../components/Confirmar.astro';
+import sitio from '../data/sitio.json';
+---
+<Base titulo="Aviso de privacidad · Praderas de Arraiján" descripcion="Aviso de privacidad de Praderas de Arraiján, proyecto de Grupo Legacy Inmobiliaria.">
+  <section class="sec priv">
+    <div class="wrap priv__wrap">
+      <p class="overline">Legal</p>
+      <h1 class="display h2">Aviso de <em>privacidad.</em></h1>
+      <p><Confirmar texto="Texto legal definitivo de Grupo Legacy" /></p>
+      <p class="lead">Los datos que nos compartes en los formularios de este sitio (nombre, teléfono, correo, modelo de interés y motivo) se usan solo para contactarte sobre tu visita y tu proceso de compra en {sitio.nombre}.</p>
+      <p class="lead">Para consultar, corregir o eliminar tus datos escríbenos a <a href={`mailto:${sitio.contacto.correos[0]}`}>{sitio.contacto.correos[0]}</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .priv { padding-top: 160px; }
+  .priv__wrap { max-width: 48rem; display: flex; flex-direction: column; gap: 24px; }
+</style>

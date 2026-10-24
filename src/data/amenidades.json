@@ -1,0 +1,16 @@
+{
+  "recreativas": [
+    { "nombre": "Parque infantil", "desc": "Juegos a la vista desde la banca.", "foto": "amenidades/parque-infantil.jpg", "alt": "Parque infantil con juegos", "ancho": 520, "alto": 600, "fotoConfirmar": false },
+    { "nombre": "Canchas deportivas", "desc": "Fútbol y partidos de fin de semana.", "foto": "amenidades/parque-cancha-render.jpg", "alt": "Render de la cancha de fútbol y el parque", "ancho": 420, "alto": 500, "fotoConfirmar": false },
+    { "nombre": "Gazebo", "desc": "Para reunirte con tus vecinos.", "icono": "gazebo", "ancho": 300, "alto": 380 },
+    { "nombre": "Minigolf", "desc": "Un plan distinto sin salir del proyecto.", "foto": "amenidades/minigolf.jpg", "alt": "Área de minigolf", "ancho": 460, "alto": 560, "fotoConfirmar": true },
+    { "nombre": "Pumptrack", "desc": "Bici y patineta para los más inquietos.", "foto": "amenidades/pumptrack.jpg", "alt": "Pista de pumptrack", "ancho": 400, "alto": 460, "fotoConfirmar": true },
+    { "nombre": "Áreas verdes", "desc": "Sombra, árboles y espacio para respirar.", "icono": "hoja", "ancho": 300, "alto": 520 },
+    { "nombre": "Área para mascotas", "desc": "Tu perro también se muda.", "foto": "amenidades/area-mascotas.jpg", "alt": "Área para mascotas", "ancho": 440, "alto": 540, "fotoConfirmar": true },
+    { "nombre": "Zona de ejercicios", "desc": "Entrena al aire libre.", "icono": "ejercicio", "ancho": 300, "alto": 420 },
+    { "nombre": "Área de yoga", "desc": "Calma a pasos de tu casa.", "icono": "yoga", "ancho": 300, "alto": 360 }
+  ],
+  "infraestructura": [
+    { "nombre": "Tanque de reserva de agua", "desc": "Respaldo de agua para toda la comunidad.", "foto": "amenidades/tanque-reserva-agua.jpg", "alt": "Tanque de reserva de agua del proyecto" }
+  ]
+}
